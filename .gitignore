@@ -1,0 +1,55 @@
+# Internal / local-only
+docs/
+.cursor/
+
+# Environment and secrets
+.env
+**/.env
+!.env.example
+!**/.env.example
+
+# Dependencies
+node_modules/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg
+dist/
+build/
+
+# Django / local database
+*.sqlite3
+db.sqlite3
+*.log
+staticfiles/
+media/
+
+# Frontend build
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+
+# Tooling caches
+.eslintcache
+.cache/
+.turbo/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+docker-compose.override.yml

@@ -1,0 +1,44 @@
+{
+  "name": "leasehold-advisory-service",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "frontend:dev": "npm run dev -w frontend",
+    "frontend:build": "npm run build -w frontend",
+    "frontend:lint": "npm run lint -w frontend",
+    "frontend:format": "npm run format -w frontend",
+    "frontend:format:check": "npm run format:check -w frontend",
+    "frontend:typecheck": "npm run typecheck -w frontend",
+    "frontend:test": "npm run test -w frontend"
+  },
+  "lint-staged": {
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "frontend/**/*.{css,json,md,html}": [
+      "prettier --write"
+    ],
+    "*.{yml,yaml,md,json}": [
+      "prettier --write"
+    ],
+    "backend/**/*.py": [
+      "backend/.venv/bin/ruff format",
+      "backend/.venv/bin/ruff check --fix"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.4.1",
+    "prettier": "^3.9.6"
+  }
+}
