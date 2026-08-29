@@ -1,3 +1,5 @@
+@use '../../styles/tokens' as *;
+
 .enquiry {
   &__eyebrow {
     margin: 0 0 var(--spacing-s);
@@ -6,23 +8,50 @@
   }
 
   &__title {
-    margin: 0 0 var(--spacing-l);
+    margin: 0 0 var(--spacing-m);
     font-size: var(--font-size-l);
     font-weight: 700;
     line-height: 1.15;
     color: var(--colour-text);
+
+    @include from-md {
+      margin: 0 0 var(--spacing-l);
+      font-size: 2.25rem;
+    }
   }
 
   &__lede {
     margin: 0 0 var(--spacing-m);
 
     &:last-of-type {
-      margin-bottom: var(--spacing-xl);
+      margin-bottom: var(--spacing-l);
+
+      @include from-md {
+        margin-bottom: var(--spacing-xl);
+      }
     }
   }
 
   &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-m);
     margin-top: var(--spacing-l);
+
+    .govuk-button {
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    @include from-md {
+      flex-direction: row;
+      align-items: center;
+
+      .govuk-button {
+        width: auto;
+      }
+    }
   }
 
   &__button {

@@ -1,18 +1,30 @@
+@use '../styles/tokens' as *;
+
 .app__banner {
   background: var(--colour-muted-bg);
   border-bottom: 1px solid var(--colour-border);
 
   &__container {
-    max-width: var(--content-width);
-    margin-inline: auto;
+    @include wrapper;
     padding-block: var(--spacing-s);
-    padding-inline: var(--spacing-m);
   }
 
   .govuk-phase-banner {
     border-bottom: 0;
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  .govuk-phase-banner__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-s);
+
+    @include from-sm {
+      display: table;
+      gap: 0;
+    }
   }
 
   .govuk-tag {

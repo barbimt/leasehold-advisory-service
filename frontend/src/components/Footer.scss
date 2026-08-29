@@ -1,21 +1,31 @@
+@use '../styles/tokens' as *;
+
 .app__footer {
   background: var(--colour-footer-bg);
   color: var(--colour-footer-text);
 
   &__container {
-    max-width: var(--content-width);
-    margin-inline: auto;
-    padding-block: var(--spacing-xl);
-    padding-inline: var(--spacing-m);
+    @include wrapper;
+    padding-block: var(--spacing-l);
+
+    @include from-md {
+      padding-block: var(--spacing-xl);
+    }
   }
 
   &__list {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-m) var(--spacing-l);
+    flex-direction: column;
+    gap: var(--spacing-m);
     margin: 0;
     padding: 0;
     list-style: none;
+
+    @include from-md {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--spacing-m) var(--spacing-l);
+    }
   }
 
   &__item {

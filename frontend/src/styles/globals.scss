@@ -36,6 +36,10 @@ body {
   line-height: var(--line-height);
   color: var(--colour-text);
   background: var(--colour-page);
+
+  @include from-sm {
+    font-size: 1.125rem;
+  }
 }
 
 .app {
@@ -48,7 +52,11 @@ body {
     width: 100%;
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: var(--spacing-xl) var(--spacing-m);
+    padding: var(--spacing-l) var(--spacing-m);
+
+    @include from-sm {
+      padding: var(--spacing-xl) var(--spacing-l);
+    }
   }
 }
 

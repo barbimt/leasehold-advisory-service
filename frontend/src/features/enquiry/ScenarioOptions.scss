@@ -1,3 +1,5 @@
+@use '../../styles/tokens' as *;
+
 .enquiry__scenarios {
   &:focus {
     outline: 3px solid var(--colour-focus);
