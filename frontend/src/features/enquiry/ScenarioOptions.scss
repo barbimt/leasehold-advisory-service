@@ -1,0 +1,15 @@
+.enquiry__scenarios {
+  &:focus {
+    outline: 3px solid var(--colour-focus);
+    outline-offset: 3px;
+  }
+
+  .govuk-radios__item {
+    margin-bottom: var(--spacing-m);
+  }
+
+  .govuk-radios__label,
+  .govuk-radios__hint {
+    padding-right: var(--spacing-s);
+  }
+}

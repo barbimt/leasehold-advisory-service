@@ -1,0 +1,48 @@
+.enquiry {
+  &__eyebrow {
+    margin: 0 0 var(--spacing-s);
+    font-size: var(--font-size-s);
+    color: var(--colour-muted);
+  }
+
+  &__title {
+    margin: 0 0 var(--spacing-l);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--colour-text);
+  }
+
+  &__lede {
+    margin: 0 0 var(--spacing-m);
+
+    &:last-of-type {
+      margin-bottom: var(--spacing-xl);
+    }
+  }
+
+  &__actions {
+    margin-top: var(--spacing-l);
+  }
+
+  &__button {
+    &--primary.govuk-button {
+      background-color: var(--colour-header-bg);
+      box-shadow: 0 2px 0 color-mix(in srgb, var(--colour-header-bg) 70%, #000);
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--colour-header-bg) 88%, #000);
+      }
+    }
+
+    &--secondary.govuk-button {
+      background-color: var(--colour-muted-bg);
+      color: var(--colour-text);
+      box-shadow: 0 2px 0 var(--colour-border);
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--colour-muted-bg) 88%, #000);
+      }
+    }
+  }
+}

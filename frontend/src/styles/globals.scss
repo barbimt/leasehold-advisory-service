@@ -1,0 +1,62 @@
+@use 'tokens' as *;
+@use 'govuk-frontend/dist/govuk/base' as * with (
+  $govuk-font-family: $font-family
+);
+@use 'govuk-frontend/dist/govuk/core';
+@use 'govuk-frontend/dist/govuk/objects/form-group';
+@use 'govuk-frontend/dist/govuk/objects/button-group';
+@use 'govuk-frontend/dist/govuk/components/skip-link';
+@use 'govuk-frontend/dist/govuk/components/button';
+@use 'govuk-frontend/dist/govuk/components/error-summary';
+@use 'govuk-frontend/dist/govuk/components/error-message';
+@use 'govuk-frontend/dist/govuk/components/fieldset';
+@use 'govuk-frontend/dist/govuk/components/hint';
+@use 'govuk-frontend/dist/govuk/components/label';
+@use 'govuk-frontend/dist/govuk/components/radios';
+@use 'govuk-frontend/dist/govuk/components/textarea';
+@use 'govuk-frontend/dist/govuk/components/inset-text';
+@use 'govuk-frontend/dist/govuk/components/phase-banner';
+@use 'govuk-frontend/dist/govuk/components/tag';
+@use 'govuk-frontend/dist/govuk/utilities';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-m);
+  line-height: var(--line-height);
+  color: var(--colour-text);
+  background: var(--colour-page);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__content {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-m);
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex='-1']:focus-visible {
+  outline: 3px solid var(--colour-focus);
+  outline-offset: 0;
+}

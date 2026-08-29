@@ -1,0 +1,19 @@
+.app__header {
+  background: var(--colour-header-bg);
+  color: var(--colour-header-text);
+
+  &__container {
+    max-width: var(--content-width);
+    margin-inline: auto;
+    padding-block: var(--spacing-l);
+    padding-inline: var(--spacing-m);
+  }
+
+  &__wordmark {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+}

@@ -1,0 +1,6 @@
+.enquiry__error {
+  &:focus {
+    outline: 3px solid var(--colour-focus);
+    outline-offset: 0;
+  }
+}

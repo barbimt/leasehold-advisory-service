@@ -1,0 +1,29 @@
+$font-family:
+  'DM Sans', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+:root {
+  --font-family: #{$font-family};
+  --colour-text: #313131;
+  --colour-page: #ffffff;
+  --colour-header-bg: #0a4d4a;
+  --colour-header-text: #ffffff;
+  --colour-footer-bg: #0a4d4a;
+  --colour-footer-text: #ffffff;
+  --colour-muted-bg: #f1f0ee;
+  --colour-accent: #7ec8c4;
+  --colour-focus: #ffdd00;
+  --colour-error: #d4351c;
+  --colour-border: #d4d2ce;
+  --colour-muted: #5c5c5c;
+  --spacing-xs: 0.25rem;
+  --spacing-s: 0.5rem;
+  --spacing-m: 1rem;
+  --spacing-l: 1.5rem;
+  --spacing-xl: 2.5rem;
+  --content-width: 40rem;
+  --font-size-s: 1rem;
+  --font-size-m: 1.125rem;
+  --font-size-l: 2.25rem;
+  --border-width: 2px;
+  --line-height: 1.5;
+}

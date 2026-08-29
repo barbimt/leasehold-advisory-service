@@ -1,0 +1,33 @@
+.app__footer {
+  background: var(--colour-footer-bg);
+  color: var(--colour-footer-text);
+
+  &__container {
+    max-width: var(--content-width);
+    margin-inline: auto;
+    padding-block: var(--spacing-xl);
+    padding-inline: var(--spacing-m);
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-m) var(--spacing-l);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    margin: 0;
+  }
+
+  &__link {
+    color: var(--colour-footer-text);
+    text-underline-offset: 0.2em;
+
+    &:hover {
+      color: var(--colour-accent);
+    }
+  }
+}

@@ -1,0 +1,12 @@
+.enquiry__privacy {
+  margin-bottom: var(--spacing-xl);
+
+  &__title {
+    margin: 0 0 var(--spacing-s);
+  }
+
+  .govuk-inset-text {
+    border-color: var(--colour-header-bg);
+    background: var(--colour-muted-bg);
+  }
+}
