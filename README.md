@@ -2,7 +2,7 @@
 
 Small digital prototype for The Leasehold Advisory Service.
 
-**Status:** setup phase (tooling only; no product features yet).
+**Status:** first product slice in progress (controlled triage plus a JSON API).
 
 ## Prerequisites
 
@@ -42,6 +42,8 @@ python manage.py runserver
 
 Copying `.env.example` to `.env` must be done inside `backend/`. Django reads `backend/.env`.
 
+The backend exposes `POST /api/triage/` after installing dependencies (including Django REST Framework via `requirements.txt`).
+
 ## Validation
 
 Frontend, from the repository root after `npm install`:
@@ -64,4 +66,5 @@ ruff check .
 ruff format .
 ruff format --check .
 pytest
+python manage.py check
 ```
