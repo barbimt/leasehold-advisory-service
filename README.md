@@ -40,7 +40,7 @@ cp .env.example .env
 python manage.py runserver
 ```
 
-Copying `.env.example` to `.env` must be done inside `backend/`. Django reads `backend/.env`. The example uses PostgreSQL on port `5432`.
+Copying `.env.example` to `.env` must be done inside `backend/`. Django reads `backend/.env`.
 
 ## Validation
 
