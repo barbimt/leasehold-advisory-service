@@ -2,7 +2,8 @@
 
 Small digital prototype for The Leasehold Advisory Service.
 
-**Status:** setup phase (tooling only; no product features yet).
+**Status:** first product slice in progress (controlled triage, a JSON API, and
+an enquiry form not yet connected to the API).
 
 ## Prerequisites
 
@@ -11,6 +12,10 @@ Small digital prototype for The Leasehold Advisory Service.
 - Docker, for PostgreSQL via Compose
 
 The app processes run on your machine. Only PostgreSQL runs in Docker.
+
+Tailwind CSS is used for the visual layer. The UI uses semantic React/HTML
+controls and follows relevant GOV.UK Design System accessibility and service
+patterns without depending on GOV.UK Frontend.
 
 ## Frontend
 
@@ -42,6 +47,8 @@ python manage.py runserver
 
 Copying `.env.example` to `.env` must be done inside `backend/`. Django reads `backend/.env`.
 
+The backend exposes `POST /api/triage/` after installing dependencies (including Django REST Framework via `requirements.txt`).
+
 ## Validation
 
 Frontend, from the repository root after `npm install`:
@@ -64,4 +71,5 @@ ruff check .
 ruff format .
 ruff format --check .
 pytest
+python manage.py check
 ```
