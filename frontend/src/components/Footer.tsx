@@ -1,5 +1,3 @@
-import './Footer.scss';
-
 const footerLinks = [
   {
     href: 'https://www.lease-advice.org/accessibility-statement/',
@@ -25,12 +23,15 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <footer className="app__footer">
-      <div className="app__footer__container">
-        <ul className="app__footer__list">
+    <footer className="bg-brand text-white">
+      <div className="mx-auto w-full max-w-wrapper px-4 py-6 sm:px-6 md:py-10">
+        <ul className="m-0 flex list-none flex-col gap-4 p-0 md:flex-row md:flex-wrap md:gap-x-6 md:gap-y-4">
           {footerLinks.map((link) => (
-            <li className="app__footer__item" key={link.label}>
-              <a className="app__footer__link" href={link.href}>
+            <li className="m-0" key={link.label}>
+              <a
+                className="text-white underline underline-offset-2 transition-colors duration-150 hover:text-accent motion-reduce:transition-none"
+                href={link.href}
+              >
                 {link.label}
               </a>
             </li>

@@ -1,7 +1,6 @@
 import type { RefObject } from 'react';
 import { SITUATION_FIELDSET_ID, VALIDATION_ERROR_ID } from './ids.ts';
 import { SCENARIO_OPTIONS, type ScenarioValue } from './scenarios.ts';
-import './ScenarioOptions.scss';
 
 type ScenarioOptionsProps = {
   value: ScenarioValue | null;
@@ -19,33 +18,34 @@ const ScenarioOptions = ({
   const describedBy = hasError ? VALIDATION_ERROR_ID : undefined;
 
   return (
-    <div
-      className={
-        hasError ? 'enquiry__group enquiry__group--error' : 'enquiry__group'
-      }
-    >
+    <div className={hasError ? 'mb-6 border-l-4 border-error pl-4' : 'mb-6'}>
       <fieldset
-        className="enquiry__scenarios"
+        className="m-0 min-w-0 border-0 p-0"
         id={SITUATION_FIELDSET_ID}
         aria-describedby={describedBy}
         aria-invalid={hasError ? true : undefined}
       >
-        <legend className="enquiry__legend">What do you need help with?</legend>
+        <legend className="mb-4 p-0 text-3xl font-bold leading-tight">
+          What do you need help with?
+        </legend>
         {hasError ? (
-          <p className="enquiry__field-error" id={VALIDATION_ERROR_ID}>
-            <span className="visually-hidden">Error:</span> Choose a situation
-            or tell us briefly what is happening.
+          <p className="mb-4 font-bold text-error" id={VALIDATION_ERROR_ID}>
+            <span className="sr-only">Error:</span> Choose a situation or tell
+            us briefly what is happening.
           </p>
         ) : null}
-        <div className="enquiry__radios">
+        <div>
           {SCENARIO_OPTIONS.map((option, index) => {
             const inputId = `scenario-${option.value}`;
             const hintId = option.hint ? `${inputId}-hint` : undefined;
 
             return (
-              <div className="enquiry__radio" key={option.value}>
+              <div
+                className="mb-4 flex flex-wrap items-start gap-x-2 last:mb-0"
+                key={option.value}
+              >
                 <input
-                  className="enquiry__radio-input"
+                  className="mt-1 size-5 shrink-0 accent-brand"
                   ref={index === 0 ? firstRadioRef : undefined}
                   id={inputId}
                   name="scenario"
@@ -57,11 +57,11 @@ const ScenarioOptions = ({
                   }}
                   aria-describedby={hintId}
                 />
-                <label className="enquiry__radio-label" htmlFor={inputId}>
+                <label className="min-w-0 flex-1 font-bold" htmlFor={inputId}>
                   {option.label}
                 </label>
                 {option.hint ? (
-                  <p id={hintId} className="enquiry__radio-hint">
+                  <p id={hintId} className="mt-1 w-full pl-7 text-muted">
                     {option.hint}
                   </p>
                 ) : null}

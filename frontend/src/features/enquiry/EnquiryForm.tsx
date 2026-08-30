@@ -5,7 +5,9 @@ import ErrorSummary from './ErrorSummary.tsx';
 import PrivacyNotice from './PrivacyNotice.tsx';
 import ScenarioOptions from './ScenarioOptions.tsx';
 import { hasMeaningfulInput, type ScenarioValue } from './scenarios.ts';
-import './EnquiryForm.scss';
+
+const actionClassName =
+  'w-full cursor-pointer rounded-sm px-6 py-3 text-lg font-semibold leading-snug transition-colors duration-150 motion-reduce:transition-none md:w-auto';
 
 const EnquiryForm = () => {
   const [scenario, setScenario] = useState<ScenarioValue | null>(null);
@@ -45,14 +47,16 @@ const EnquiryForm = () => {
 
   return (
     <>
-      <p className="enquiry__eyebrow">Leasehold guidance</p>
-      <h1 className="enquiry__title">Find the right next step</h1>
+      <p className="mb-2 text-base text-muted">Leasehold guidance</p>
+      <h1 className="mb-4 text-3xl font-bold leading-tight text-ink md:mb-6 md:text-4xl">
+        Find the right next step
+      </h1>
       {showError ? <ErrorSummary summaryRef={errorSummaryRef} /> : null}
-      <p className="enquiry__lede">
+      <p className="mb-4">
         Describe what is happening, or choose a common situation. We will help
         you find relevant LEASE guidance.
       </p>
-      <p className="enquiry__lede">
+      <p className="mb-6 md:mb-10">
         This tool gives general information. It does not provide personalised
         legal advice. Information you enter is not saved.
       </p>
@@ -69,15 +73,15 @@ const EnquiryForm = () => {
           onChange={setDescription}
           hasError={showError}
         />
-        <div className="enquiry__actions">
+        <div className="mt-6 flex flex-col items-stretch gap-4 md:flex-row md:items-center">
           <button
-            className="enquiry__button enquiry__button--primary"
+            className={`${actionClassName} bg-brand text-white hover:bg-brand-hover`}
             type="submit"
           >
             Find guidance
           </button>
           <button
-            className="enquiry__button enquiry__button--secondary"
+            className={`${actionClassName} bg-surface text-ink hover:bg-surface-hover`}
             type="button"
             onClick={handleReset}
           >

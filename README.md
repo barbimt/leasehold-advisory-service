@@ -13,9 +13,9 @@ an enquiry form not yet connected to the API).
 
 The app processes run on your machine. Only PostgreSQL runs in Docker.
 
-The frontend uses Sass (`sass-embedded`). Enquiry form patterns follow GOV.UK
-Design System accessibility guidance, implemented with semantic HTML rather
-than the `govuk-frontend` package.
+Tailwind CSS is used for the visual layer. The UI uses semantic React/HTML
+controls and follows relevant GOV.UK Design System accessibility and service
+patterns without depending on GOV.UK Frontend.
 
 ## Frontend
 

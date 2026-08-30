@@ -1,6 +1,5 @@
 import { DESCRIPTION_FIELD_ID, VALIDATION_ERROR_ID } from './ids.ts';
 import { DESCRIPTION_MAX_LENGTH } from './scenarios.ts';
-import './EnquiryTextarea.scss';
 
 type EnquiryTextareaProps = {
   value: string;
@@ -30,24 +29,27 @@ const EnquiryTextarea = ({
     .join(' ');
 
   return (
-    <div className="enquiry__textarea">
-      <p className="enquiry__textarea__divider">AND, OR INSTEAD</p>
-      <label className="enquiry__label" htmlFor={DESCRIPTION_FIELD_ID}>
+    <div className="mb-6">
+      <p className="my-6 font-bold tracking-wide md:my-6">AND, OR INSTEAD</p>
+      <label
+        className="mb-2 block text-3xl font-bold leading-tight"
+        htmlFor={DESCRIPTION_FIELD_ID}
+      >
         Describe what is happening
       </label>
-      <p id={hintId} className="enquiry__hint">
+      <p id={hintId} className="mb-4 text-muted">
         Use your own words. A sentence or two is enough.
       </p>
-      <p id={exampleId} className="enquiry__textarea__example">
+      <p id={exampleId} className="mb-4 text-muted">
         For example, “My managing agent has sent me a large bill for roof
         repairs.”
       </p>
-      <p id={privacyId} className="enquiry__textarea__privacy">
+      <p id={privacyId} className="mb-4">
         Do not include names, addresses, account numbers or other personal
         information.
       </p>
       <textarea
-        className="enquiry__textarea-field"
+        className="block min-h-32 w-full resize-y rounded-sm border-2 border-ink p-2 font-sans text-inherit"
         id={DESCRIPTION_FIELD_ID}
         name="description"
         rows={5}
@@ -59,7 +61,7 @@ const EnquiryTextarea = ({
         aria-describedby={describedBy}
         aria-invalid={hasError ? true : undefined}
       />
-      <p className="enquiry__textarea__count" id={countId}>
+      <p className="mt-2 text-muted" id={countId}>
         You have {remaining} characters remaining.
       </p>
     </div>
