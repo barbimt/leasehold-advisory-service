@@ -1,11 +1,27 @@
 import { TRIAGE_PATH, submitTriage, toTriageRequest } from './triage.ts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const guidanceResource = {
+  title: 'Primary guide',
+  summary: 'A blurb',
+  url: 'https://www.lease-advice.org/example-primary/',
+  linkText: 'Read the primary guide',
+};
+
 const topic = {
   slug: 'repairs',
   label: 'Repairs',
   summary: 'A summary',
   nextStep: 'A next step',
+  primaryResource: guidanceResource,
+  relatedResources: [
+    {
+      title: 'Related guide',
+      summary: 'Another blurb',
+      url: 'https://www.lease-advice.org/example-related/',
+      linkText: 'Read the related guide',
+    },
+  ],
 };
 
 const jsonResponse = (body: unknown, status = 200) =>
@@ -69,6 +85,20 @@ describe('submitTriage', () => {
     await expect(submitTriage('repairs', '')).resolves.toEqual(topic);
   });
 
+  it('parses an unknown topic with no primary resource', async () => {
+    const unknownTopic = {
+      slug: 'unknown',
+      label: 'Unknown / not sure',
+      summary: 'A summary',
+      nextStep: 'A next step',
+      primaryResource: null,
+      relatedResources: [],
+    };
+    fetchMock().mockResolvedValueOnce(jsonResponse({ topic: unknownTopic }));
+
+    await expect(submitTriage('not_sure', '')).resolves.toEqual(unknownTopic);
+  });
+
   it('maps a failed fetch to a network error', async () => {
     fetchMock().mockRejectedValueOnce(new TypeError('Failed to fetch'));
 
@@ -90,6 +120,23 @@ describe('submitTriage', () => {
 
   it('maps a malformed body to an invalid-response error', async () => {
     fetchMock().mockResolvedValueOnce(jsonResponse({ topic: { slug: 1 } }));
+
+    await expect(submitTriage('repairs', '')).rejects.toMatchObject({
+      kind: 'invalid-response',
+    });
+  });
+
+  it('maps a missing resource list to an invalid-response error', async () => {
+    fetchMock().mockResolvedValueOnce(
+      jsonResponse({
+        topic: {
+          slug: 'repairs',
+          label: 'Repairs',
+          summary: 'A summary',
+          nextStep: 'A next step',
+        },
+      }),
+    );
 
     await expect(submitTriage('repairs', '')).rejects.toMatchObject({
       kind: 'invalid-response',

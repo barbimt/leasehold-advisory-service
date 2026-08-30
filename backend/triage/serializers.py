@@ -36,8 +36,23 @@ class TriageRequestSerializer(serializers.Serializer):
         return attrs
 
 
+class GuidanceResourceSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    summary = serializers.CharField()
+    url = serializers.URLField()
+    linkText = serializers.CharField(source="link_text")
+
+
 class TopicResponseSerializer(serializers.Serializer):
     slug = serializers.CharField()
     label = serializers.CharField()
     summary = serializers.CharField()
     nextStep = serializers.CharField(source="next_step")
+    primaryResource = GuidanceResourceSerializer(
+        source="primary_resource",
+        allow_null=True,
+    )
+    relatedResources = GuidanceResourceSerializer(
+        source="related_resources",
+        many=True,
+    )

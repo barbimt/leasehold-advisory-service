@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { ApiError } from '../../api/http.ts';
 import { submitTriage, type TriageTopic } from '../../api/triage.ts';
+import TriageResult from '../result/TriageResult.tsx';
 import EnquiryTextarea from './EnquiryTextarea.tsx';
 import ErrorSummary from './ErrorSummary.tsx';
 import PrivacyNotice from './PrivacyNotice.tsx';
@@ -25,9 +26,11 @@ const EnquiryForm = () => {
   const [validationAttempt, setValidationAttempt] = useState(0);
   const [request, setRequest] = useState<RequestState>({ status: 'idle' });
   const [submissionErrorAttempt, setSubmissionErrorAttempt] = useState(0);
+  const [resetAttempt, setResetAttempt] = useState(0);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const submissionErrorRef = useRef<HTMLDivElement>(null);
   const firstRadioRef = useRef<HTMLInputElement>(null);
+  const resultHeadingRef = useRef<HTMLHeadingElement>(null);
   const inFlightRef = useRef(false);
   const isSubmitting = request.status === 'submitting';
 
@@ -46,6 +49,22 @@ const EnquiryForm = () => {
 
     submissionErrorRef.current?.focus();
   }, [submissionErrorAttempt]);
+
+  useEffect(() => {
+    if (request.status !== 'success') {
+      return;
+    }
+
+    resultHeadingRef.current?.focus();
+  }, [request]);
+
+  useEffect(() => {
+    if (resetAttempt === 0) {
+      return;
+    }
+
+    firstRadioRef.current?.focus();
+  }, [resetAttempt]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -82,14 +101,34 @@ const EnquiryForm = () => {
       return;
     }
 
+    const returningFromResult = request.status === 'success';
+
     setScenario(null);
     setDescription('');
     setShowError(false);
     setValidationAttempt(0);
     setRequest({ status: 'idle' });
     setSubmissionErrorAttempt(0);
+
+    if (returningFromResult) {
+      setResetAttempt((attempt) => attempt + 1);
+      return;
+    }
+
     firstRadioRef.current?.focus();
   };
+
+  if (request.status === 'success') {
+    return (
+      <TriageResult
+        topic={request.topic}
+        description={description}
+        scenario={scenario}
+        headingRef={resultHeadingRef}
+        onStartAgain={handleReset}
+      />
+    );
+  }
 
   return (
     <>
