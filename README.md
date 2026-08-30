@@ -2,7 +2,8 @@
 
 Small digital prototype for The Leasehold Advisory Service.
 
-**Status:** first product slice in progress (controlled triage plus a JSON API).
+**Status:** first product slice in progress (controlled triage, a JSON API, and
+an enquiry form not yet connected to the API).
 
 ## Prerequisites
 
@@ -11,6 +12,10 @@ Small digital prototype for The Leasehold Advisory Service.
 - Docker, for PostgreSQL via Compose
 
 The app processes run on your machine. Only PostgreSQL runs in Docker.
+
+Tailwind CSS is used for the visual layer. The UI uses semantic React/HTML
+controls and follows relevant GOV.UK Design System accessibility and service
+patterns without depending on GOV.UK Frontend.
 
 ## Frontend
 
