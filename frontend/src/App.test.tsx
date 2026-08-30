@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
 import axe from 'axe-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TRIAGE_PATH } from './api/triage.ts';
@@ -146,9 +147,11 @@ describe('enquiry page', () => {
     await user.type(screen.getByRole('textbox'), 'The roof needs work');
     await user.click(screen.getByRole('button', { name: /clear/i }));
 
-    expect(screen.getAllByRole('radio').every((radio) => !radio.checked)).toBe(
-      true,
-    );
+    expect(
+      screen
+        .getAllByRole('radio')
+        .every((radio) => radio instanceof HTMLInputElement && !radio.checked),
+    ).toBe(true);
     expect(screen.getByRole('textbox')).toHaveValue('');
     expect(document.getElementById(ERROR_SUMMARY_ID)).not.toBeInTheDocument();
     expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
