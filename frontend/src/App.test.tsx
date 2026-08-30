@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import axe from 'axe-core';
 import { describe, expect, it } from 'vitest';
 import App from './App.tsx';
 import {
@@ -129,5 +130,22 @@ describe('enquiry page', () => {
     for (const radio of screen.getAllByRole('radio')) {
       expect(radio).toHaveAccessibleName();
     }
+  });
+
+  it('has no automated accessibility violations on first load', async () => {
+    const { container } = render(<App />);
+    const results = await axe.run(container);
+
+    expect(results.violations).toEqual([]);
+  });
+
+  it('has no automated accessibility violations after invalid submit', async () => {
+    const { container } = render(<App />);
+
+    await submitForm();
+
+    const results = await axe.run(container);
+
+    expect(results.violations).toEqual([]);
   });
 });
