@@ -56,7 +56,7 @@ const EnquiryForm = () => {
         Describe what is happening, or choose a common situation. We will help
         you find relevant LEASE guidance.
       </p>
-      <p className="mb-6 md:mb-10">
+      <p className="mb-6 md:mb-8">
         This tool gives general information. It does not provide personalised
         legal advice. Information you enter is not saved.
       </p>
