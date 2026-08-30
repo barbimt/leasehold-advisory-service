@@ -3,7 +3,7 @@
 Small digital prototype for The Leasehold Advisory Service.
 
 **Status:** first product slice in progress (controlled triage, a JSON API, and
-an enquiry form not yet connected to the API).
+an enquiry form connected to `POST /api/triage/`).
 
 ## Prerequisites
 
@@ -25,6 +25,14 @@ From the repository root:
 npm install
 npm run frontend:dev
 ```
+
+The Vite dev server proxies `/api` to Django at `http://127.0.0.1:8000`. Run the
+backend as well so form submissions reach `POST /api/triage/`. The frontend
+calls that relative path; it does not hard-code the Django origin.
+
+If the API returns a validation error (HTTP 400), the form currently shows a
+generic failure message. Mapping individual server field errors into the form
+is deferred.
 
 ## Backend
 

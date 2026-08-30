@@ -1,13 +1,40 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { TRIAGE_PATH } from './api/triage.ts';
 import App from './App.tsx';
 import {
   ERROR_SUMMARY_ID,
   SITUATION_FIELDSET_ID,
+  SUBMISSION_ERROR_ID,
 } from './features/enquiry/ids.ts';
 import { SCENARIO_OPTIONS } from './features/enquiry/scenarios.ts';
+
+const topic = {
+  slug: 'repairs',
+  label: 'Repairs',
+  summary: 'A summary',
+  nextStep: 'A next step',
+};
+
+const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+const fetchMock = () => vi.mocked(fetch);
+
+const postedBody = () => {
+  const init = fetchMock().mock.calls[0]?.[1];
+  const body =
+    init && typeof init === 'object' && 'body' in init ? init.body : undefined;
+  if (typeof body !== 'string') {
+    throw new Error('Expected JSON request body');
+  }
+  return JSON.parse(body) as Record<string, unknown>;
+};
 
 const submitForm = async () => {
   const user = userEvent.setup();
@@ -16,6 +43,17 @@ const submitForm = async () => {
 };
 
 describe('enquiry page', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(jsonResponse({ topic }))),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('renders a page heading', () => {
     render(<App />);
 
@@ -85,6 +123,7 @@ describe('enquiry page', () => {
     expect(
       screen.getByRole('link', { name: /situation or tell us/i }),
     ).toHaveAttribute('href', `#${SITUATION_FIELDSET_ID}`);
+    expect(fetchMock()).not.toHaveBeenCalled();
   });
 
   it('moves focus to the error summary after invalid submission', async () => {
@@ -147,5 +186,152 @@ describe('enquiry page', () => {
     const results = await axe.run(container);
 
     expect(results.violations).toEqual([]);
+  });
+
+  it('submits a selected situation to the triage API', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getAllByRole('radio')[0]);
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    await waitFor(() => {
+      expect(fetchMock()).toHaveBeenCalledWith(
+        TRIAGE_PATH,
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+    expect(postedBody()).toEqual({
+      scenario: SCENARIO_OPTIONS[0].value,
+    });
+  });
+
+  it('submits a description to the triage API', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByRole('textbox'), 'The roof needs work');
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    await waitFor(() => {
+      expect(fetchMock()).toHaveBeenCalledTimes(1);
+    });
+    expect(postedBody()).toEqual({
+      description: 'The roof needs work',
+    });
+  });
+
+  it('submits both a situation and a description', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getAllByRole('radio')[0]);
+    await user.type(screen.getByRole('textbox'), 'The roof needs work');
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    await waitFor(() => {
+      expect(fetchMock()).toHaveBeenCalledTimes(1);
+    });
+    expect(postedBody()).toEqual({
+      scenario: SCENARIO_OPTIONS[0].value,
+      description: 'The roof needs work',
+    });
+  });
+
+  it('shows submitting feedback and prevents a duplicate request', async () => {
+    let release: ((value: Response) => void) | undefined;
+    fetchMock().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    );
+
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getAllByRole('radio')[0]);
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    const submitting = await screen.findByRole('button', {
+      name: /finding/i,
+    });
+    expect(submitting).toBeDisabled();
+    expect(screen.getByRole('button', { name: /clear/i })).toBeDisabled();
+
+    await user.click(submitting);
+    expect(fetchMock()).toHaveBeenCalledTimes(1);
+
+    release?.(jsonResponse({ topic }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /find guidance/i }),
+      ).toBeEnabled();
+    });
+  });
+
+  it('keeps entered values after a successful response', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getAllByRole('radio')[0]);
+    await user.type(screen.getByRole('textbox'), 'The roof needs work');
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    await waitFor(() => {
+      expect(fetchMock()).toHaveBeenCalledTimes(1);
+    });
+    expect(screen.getAllByRole('radio')[0]).toBeChecked();
+    expect(screen.getByRole('textbox')).toHaveValue('The roof needs work');
+    expect(
+      document.getElementById(SUBMISSION_ERROR_ID),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows accessible feedback when the request fails and keeps values', async () => {
+    const marker = 'UNIQUE_ENQUIRY_MARKER_9f3c2a';
+    fetchMock().mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByRole('textbox'), marker);
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    const error = await waitFor(() => {
+      const node = document.getElementById(SUBMISSION_ERROR_ID);
+      expect(node).toBeInTheDocument();
+      return node;
+    });
+
+    expect(error).not.toHaveAttribute('role');
+    expect(error?.textContent).toEqual(expect.any(String));
+    expect(error?.textContent?.trim()).not.toBe('');
+    expect(error?.textContent).not.toContain(marker);
+    expect(screen.getByRole('textbox')).toHaveValue(marker);
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(error);
+    });
+  });
+
+  it('shows accessible feedback for an unexpected server response', async () => {
+    fetchMock().mockResolvedValueOnce(jsonResponse({ error: 'nope' }, 500));
+
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getAllByRole('radio')[0]);
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    const error = await waitFor(() => {
+      const node = document.getElementById(SUBMISSION_ERROR_ID);
+      expect(node).toBeInTheDocument();
+      return node;
+    });
+
+    expect(error?.textContent?.trim()).not.toBe('');
+    expect(screen.getAllByRole('radio')[0]).toBeChecked();
   });
 });
