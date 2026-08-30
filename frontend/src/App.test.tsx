@@ -80,6 +80,7 @@ describe('enquiry page', () => {
     const summary = document.getElementById(ERROR_SUMMARY_ID);
 
     expect(summary).toBeInTheDocument();
+    expect(summary).not.toHaveAttribute('role');
     expect(
       screen.getByRole('link', { name: /situation or tell us/i }),
     ).toHaveAttribute('href', `#${SITUATION_FIELDSET_ID}`);
@@ -110,9 +111,7 @@ describe('enquiry page', () => {
     );
     expect(screen.getByRole('textbox')).toHaveValue('');
     expect(document.getElementById(ERROR_SUMMARY_ID)).not.toBeInTheDocument();
-    expect(document.activeElement).toBe(
-      document.getElementById(SITUATION_FIELDSET_ID),
-    );
+    expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
   });
 
   it('associates help text with the description field', () => {

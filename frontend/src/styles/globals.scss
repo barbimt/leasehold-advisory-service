@@ -1,23 +1,4 @@
 @use 'tokens' as *;
-@use 'govuk-frontend/dist/govuk/base' as * with (
-  $govuk-font-family: $font-family
-);
-@use 'govuk-frontend/dist/govuk/core';
-@use 'govuk-frontend/dist/govuk/objects/form-group';
-@use 'govuk-frontend/dist/govuk/objects/button-group';
-@use 'govuk-frontend/dist/govuk/components/skip-link';
-@use 'govuk-frontend/dist/govuk/components/button';
-@use 'govuk-frontend/dist/govuk/components/error-summary';
-@use 'govuk-frontend/dist/govuk/components/error-message';
-@use 'govuk-frontend/dist/govuk/components/fieldset';
-@use 'govuk-frontend/dist/govuk/components/hint';
-@use 'govuk-frontend/dist/govuk/components/label';
-@use 'govuk-frontend/dist/govuk/components/radios';
-@use 'govuk-frontend/dist/govuk/components/textarea';
-@use 'govuk-frontend/dist/govuk/components/inset-text';
-@use 'govuk-frontend/dist/govuk/components/phase-banner';
-@use 'govuk-frontend/dist/govuk/components/tag';
-@use 'govuk-frontend/dist/govuk/utilities';
 
 *,
 *::before,
@@ -47,6 +28,36 @@ body {
   display: flex;
   flex-direction: column;
 
+  &__skip-link {
+    position: absolute;
+    left: var(--spacing-s);
+    top: var(--spacing-s);
+    z-index: 2;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+
+    &:focus,
+    &:focus-visible {
+      width: auto;
+      height: auto;
+      padding: var(--spacing-s) var(--spacing-m);
+      overflow: visible;
+      clip: auto;
+      clip-path: none;
+      white-space: normal;
+      background: var(--colour-page);
+      color: var(--colour-text);
+      outline: 3px solid var(--colour-focus);
+      outline-offset: 0;
+    }
+  }
+
   &__content {
     flex: 1 0 auto;
     width: 100%;
@@ -60,6 +71,25 @@ body {
   }
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+a,
+button,
+textarea {
+  @include motion-colour;
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -67,4 +97,15 @@ textarea:focus-visible,
 [tabindex='-1']:focus-visible {
   outline: 3px solid var(--colour-focus);
   outline-offset: 0;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0.01ms;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }

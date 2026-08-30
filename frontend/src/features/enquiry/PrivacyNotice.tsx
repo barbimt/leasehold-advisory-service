@@ -6,7 +6,7 @@ const PrivacyNotice = () => {
       className="enquiry__privacy"
       aria-labelledby="privacy-notice-heading"
     >
-      <div className="govuk-inset-text">
+      <div className="enquiry__privacy__inset">
         <h2 className="enquiry__privacy__title" id="privacy-notice-heading">
           Keep your information private
         </h2>

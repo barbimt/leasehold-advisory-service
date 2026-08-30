@@ -30,17 +30,14 @@ const EnquiryTextarea = ({
     .join(' ');
 
   return (
-    <div className="govuk-form-group enquiry__textarea">
+    <div className="enquiry__textarea">
       <p className="enquiry__textarea__divider">AND, OR INSTEAD</p>
-      <label
-        className="govuk-label govuk-label--m"
-        htmlFor={DESCRIPTION_FIELD_ID}
-      >
+      <label className="enquiry__label" htmlFor={DESCRIPTION_FIELD_ID}>
         Describe what is happening
       </label>
-      <div id={hintId} className="govuk-hint">
+      <p id={hintId} className="enquiry__hint">
         Use your own words. A sentence or two is enough.
-      </div>
+      </p>
       <p id={exampleId} className="enquiry__textarea__example">
         For example, “My managing agent has sent me a large bill for roof
         repairs.”
@@ -50,7 +47,7 @@ const EnquiryTextarea = ({
         information.
       </p>
       <textarea
-        className="govuk-textarea"
+        className="enquiry__textarea-field"
         id={DESCRIPTION_FIELD_ID}
         name="description"
         rows={5}

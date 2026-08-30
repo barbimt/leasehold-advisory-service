@@ -7,51 +7,46 @@ type ScenarioOptionsProps = {
   value: ScenarioValue | null;
   onChange: (value: ScenarioValue) => void;
   hasError: boolean;
-  groupRef: RefObject<HTMLFieldSetElement | null>;
+  firstRadioRef: RefObject<HTMLInputElement | null>;
 };
 
 const ScenarioOptions = ({
   value,
   onChange,
   hasError,
-  groupRef,
+  firstRadioRef,
 }: ScenarioOptionsProps) => {
   const describedBy = hasError ? VALIDATION_ERROR_ID : undefined;
 
   return (
     <div
       className={
-        hasError
-          ? 'govuk-form-group govuk-form-group--error'
-          : 'govuk-form-group'
+        hasError ? 'enquiry__group enquiry__group--error' : 'enquiry__group'
       }
     >
       <fieldset
-        className="govuk-fieldset enquiry__scenarios"
+        className="enquiry__scenarios"
         id={SITUATION_FIELDSET_ID}
-        ref={groupRef}
-        tabIndex={-1}
         aria-describedby={describedBy}
         aria-invalid={hasError ? true : undefined}
       >
-        <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
-          What do you need help with?
-        </legend>
+        <legend className="enquiry__legend">What do you need help with?</legend>
         {hasError ? (
-          <p className="govuk-error-message" id={VALIDATION_ERROR_ID}>
-            <span className="govuk-visually-hidden">Error:</span> Choose a
-            situation or tell us briefly what is happening.
+          <p className="enquiry__field-error" id={VALIDATION_ERROR_ID}>
+            <span className="visually-hidden">Error:</span> Choose a situation
+            or tell us briefly what is happening.
           </p>
         ) : null}
-        <div className="govuk-radios">
-          {SCENARIO_OPTIONS.map((option) => {
+        <div className="enquiry__radios">
+          {SCENARIO_OPTIONS.map((option, index) => {
             const inputId = `scenario-${option.value}`;
             const hintId = option.hint ? `${inputId}-hint` : undefined;
 
             return (
-              <div className="govuk-radios__item" key={option.value}>
+              <div className="enquiry__radio" key={option.value}>
                 <input
-                  className="govuk-radios__input"
+                  className="enquiry__radio-input"
+                  ref={index === 0 ? firstRadioRef : undefined}
                   id={inputId}
                   name="scenario"
                   type="radio"
@@ -62,13 +57,13 @@ const ScenarioOptions = ({
                   }}
                   aria-describedby={hintId}
                 />
-                <label className="govuk-radios__label" htmlFor={inputId}>
+                <label className="enquiry__radio-label" htmlFor={inputId}>
                   {option.label}
                 </label>
                 {option.hint ? (
-                  <div id={hintId} className="govuk-hint govuk-radios__hint">
+                  <p id={hintId} className="enquiry__radio-hint">
                     {option.hint}
-                  </div>
+                  </p>
                 ) : null}
               </div>
             );

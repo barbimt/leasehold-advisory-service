@@ -13,9 +13,9 @@ an enquiry form not yet connected to the API).
 
 The app processes run on your machine. Only PostgreSQL runs in Docker.
 
-The frontend uses Sass (`sass-embedded`) and the official `govuk-frontend`
-package for selected form, button and error styles. `npm install` installs
-both.
+The frontend uses Sass (`sass-embedded`). Enquiry form patterns follow GOV.UK
+Design System accessibility guidance, implemented with semantic HTML rather
+than the `govuk-frontend` package.
 
 ## Frontend
 

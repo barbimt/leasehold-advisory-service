@@ -9,26 +9,30 @@
     padding-block: var(--spacing-s);
   }
 
-  .govuk-phase-banner {
-    border-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  .govuk-phase-banner__content {
+  &__content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-s);
+    margin: 0;
 
     @include from-sm {
-      display: table;
-      gap: 0;
+      flex-direction: row;
+      align-items: center;
+      gap: var(--spacing-m);
     }
   }
 
-  .govuk-tag {
+  &__tag {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-s);
     background: var(--colour-header-bg);
     color: var(--colour-header-text);
+    font-size: var(--font-size-s);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    @include box-radius;
   }
 }

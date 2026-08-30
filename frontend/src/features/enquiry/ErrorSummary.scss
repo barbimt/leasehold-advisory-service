@@ -1,6 +1,35 @@
+@use '../../styles/tokens' as *;
+
 .enquiry__error {
+  margin: 0 0 var(--spacing-l);
+  padding: var(--spacing-m);
+  border: var(--border-width) solid var(--colour-error);
+
+  @include box-radius;
+
   &:focus {
     outline: 3px solid var(--colour-focus);
     outline-offset: 0;
+  }
+
+  &__title {
+    margin: 0 0 var(--spacing-s);
+    font-size: var(--font-size-l);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  &__body {
+    margin: 0;
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 1.25rem;
+
+    a {
+      color: var(--colour-error);
+      font-weight: 700;
+    }
   }
 }

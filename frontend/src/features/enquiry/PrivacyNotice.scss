@@ -1,3 +1,5 @@
+@use '../../styles/tokens' as *;
+
 .enquiry__privacy {
   margin-bottom: var(--spacing-xl);
 
@@ -5,8 +7,15 @@
     margin: 0 0 var(--spacing-s);
   }
 
-  .govuk-inset-text {
-    border-color: var(--colour-header-bg);
+  &__inset {
+    padding: var(--spacing-m);
+    border-left: 5px solid var(--colour-header-bg);
     background: var(--colour-muted-bg);
+
+    @include box-radius;
+
+    p {
+      margin: 0;
+    }
   }
 }

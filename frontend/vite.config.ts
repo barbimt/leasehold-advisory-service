@@ -4,13 +4,6 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react()],
-  css: {
-    preprocessorOptions: {
-      scss: {
-        quietDeps: true,
-      },
-    },
-  },
   test: {
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',

@@ -13,7 +13,7 @@ const EnquiryForm = () => {
   const [showError, setShowError] = useState(false);
   const [validationAttempt, setValidationAttempt] = useState(0);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
-  const scenarioGroupRef = useRef<HTMLFieldSetElement>(null);
+  const firstRadioRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (validationAttempt === 0) {
@@ -40,7 +40,7 @@ const EnquiryForm = () => {
     setDescription('');
     setShowError(false);
     setValidationAttempt(0);
-    scenarioGroupRef.current?.focus();
+    firstRadioRef.current?.focus();
   };
 
   return (
@@ -62,22 +62,22 @@ const EnquiryForm = () => {
           value={scenario}
           onChange={setScenario}
           hasError={showError}
-          groupRef={scenarioGroupRef}
+          firstRadioRef={firstRadioRef}
         />
         <EnquiryTextarea
           value={description}
           onChange={setDescription}
           hasError={showError}
         />
-        <div className="govuk-button-group enquiry__actions">
+        <div className="enquiry__actions">
           <button
-            className="govuk-button enquiry__button enquiry__button--primary"
+            className="enquiry__button enquiry__button--primary"
             type="submit"
           >
             Find guidance
           </button>
           <button
-            className="govuk-button govuk-button--secondary enquiry__button enquiry__button--secondary"
+            className="enquiry__button enquiry__button--secondary"
             type="button"
             onClick={handleReset}
           >

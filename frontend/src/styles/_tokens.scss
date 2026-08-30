@@ -62,4 +62,20 @@ $breakpoint-lg: 64rem;
   --font-size-l: 1.75rem;
   --border-width: 2px;
   --line-height: 1.5;
+  --radius-box: 4px;
+  --motion-duration: 120ms;
+  --motion-ease: ease-out;
+  --text-lg: 1.125rem;
+  --spacing-button-inline: 1.5rem;
+  --spacing-button-block: 0.75rem;
+}
+
+@mixin box-radius {
+  border-radius: var(--radius-box);
+}
+
+@mixin motion-colour {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: var(--motion-duration);
+  transition-timing-function: var(--motion-ease);
 }

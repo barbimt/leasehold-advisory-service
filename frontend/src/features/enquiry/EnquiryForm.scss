@@ -39,35 +39,44 @@
     gap: var(--spacing-m);
     margin-top: var(--spacing-l);
 
-    .govuk-button {
-      width: 100%;
-      margin-bottom: 0;
-    }
-
     @include from-md {
       flex-direction: row;
       align-items: center;
-
-      .govuk-button {
-        width: auto;
-      }
     }
   }
 
   &__button {
-    &--primary.govuk-button {
+    width: 100%;
+    margin: 0;
+    padding-block: var(--spacing-button-block);
+    padding-inline: var(--spacing-button-inline);
+    border: 0;
+    font-family: inherit;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    box-shadow: none;
+
+    @include box-radius;
+    @include motion-colour;
+
+    @include from-md {
+      width: auto;
+    }
+
+    &--primary {
       background-color: var(--colour-header-bg);
-      box-shadow: 0 2px 0 color-mix(in srgb, var(--colour-header-bg) 70%, #000);
+      color: var(--colour-header-text);
 
       &:hover {
         background-color: color-mix(in srgb, var(--colour-header-bg) 88%, #000);
       }
     }
 
-    &--secondary.govuk-button {
+    &--secondary {
       background-color: var(--colour-muted-bg);
       color: var(--colour-text);
-      box-shadow: 0 2px 0 var(--colour-border);
 
       &:hover {
         background-color: color-mix(in srgb, var(--colour-muted-bg) 88%, #000);

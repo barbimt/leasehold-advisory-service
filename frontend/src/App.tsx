@@ -7,7 +7,7 @@ import EnquiryForm from './features/enquiry/EnquiryForm.tsx';
 const App = () => {
   return (
     <div className="app">
-      <a className="govuk-skip-link" href="#main-content">
+      <a className="app__skip-link" href="#main-content">
         Skip to main content
       </a>
       <Header />
