@@ -1,21 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import { ApiError } from '../../api/http.ts';
+import { submitTriage, type TriageTopic } from '../../api/triage.ts';
 import EnquiryTextarea from './EnquiryTextarea.tsx';
 import ErrorSummary from './ErrorSummary.tsx';
 import PrivacyNotice from './PrivacyNotice.tsx';
 import ScenarioOptions from './ScenarioOptions.tsx';
+import SubmissionError from './SubmissionError.tsx';
 import { hasMeaningfulInput, type ScenarioValue } from './scenarios.ts';
 
 const actionClassName =
-  'w-full cursor-pointer rounded-sm px-6 py-3 text-lg font-semibold leading-snug transition-colors duration-150 motion-reduce:transition-none md:w-auto';
+  'w-full cursor-pointer rounded-sm px-6 py-3 text-lg font-semibold leading-snug transition-colors duration-150 motion-reduce:transition-none disabled:cursor-not-allowed md:w-auto';
+
+type RequestState =
+  | { status: 'idle' }
+  | { status: 'submitting' }
+  | { status: 'success'; topic: TriageTopic }
+  | { status: 'error'; kind: ApiError['kind'] };
 
 const EnquiryForm = () => {
   const [scenario, setScenario] = useState<ScenarioValue | null>(null);
   const [description, setDescription] = useState('');
   const [showError, setShowError] = useState(false);
   const [validationAttempt, setValidationAttempt] = useState(0);
+  const [request, setRequest] = useState<RequestState>({ status: 'idle' });
+  const [submissionErrorAttempt, setSubmissionErrorAttempt] = useState(0);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
+  const submissionErrorRef = useRef<HTMLDivElement>(null);
   const firstRadioRef = useRef<HTMLInputElement>(null);
+  const inFlightRef = useRef(false);
+  const isSubmitting = request.status === 'submitting';
 
   useEffect(() => {
     if (validationAttempt === 0) {
@@ -25,23 +39,55 @@ const EnquiryForm = () => {
     errorSummaryRef.current?.focus();
   }, [validationAttempt]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (submissionErrorAttempt === 0) {
+      return;
+    }
+
+    submissionErrorRef.current?.focus();
+  }, [submissionErrorAttempt]);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (inFlightRef.current) {
+      return;
+    }
 
     if (!hasMeaningfulInput(scenario, description)) {
       setShowError(true);
+      setRequest({ status: 'idle' });
       setValidationAttempt((attempt) => attempt + 1);
       return;
     }
 
+    inFlightRef.current = true;
     setShowError(false);
+    setRequest({ status: 'submitting' });
+
+    try {
+      const topic = await submitTriage(scenario, description);
+      setRequest({ status: 'success', topic });
+    } catch (error) {
+      const kind = error instanceof ApiError ? error.kind : 'network';
+      setRequest({ status: 'error', kind });
+      setSubmissionErrorAttempt((attempt) => attempt + 1);
+    } finally {
+      inFlightRef.current = false;
+    }
   };
 
   const handleReset = () => {
+    if (inFlightRef.current) {
+      return;
+    }
+
     setScenario(null);
     setDescription('');
     setShowError(false);
     setValidationAttempt(0);
+    setRequest({ status: 'idle' });
+    setSubmissionErrorAttempt(0);
     firstRadioRef.current?.focus();
   };
 
@@ -52,6 +98,9 @@ const EnquiryForm = () => {
         Find the right next step
       </h1>
       {showError ? <ErrorSummary summaryRef={errorSummaryRef} /> : null}
+      {request.status === 'error' ? (
+        <SubmissionError kind={request.kind} errorRef={submissionErrorRef} />
+      ) : null}
       <p className="mb-4">
         Describe what is happening, or choose a common situation. We will help
         you find relevant LEASE guidance.
@@ -61,7 +110,11 @@ const EnquiryForm = () => {
         legal advice. Information you enter is not saved.
       </p>
       <PrivacyNotice />
-      <form onSubmit={handleSubmit} noValidate>
+      <form
+        aria-busy={isSubmitting ? true : undefined}
+        noValidate
+        onSubmit={handleSubmit}
+      >
         <ScenarioOptions
           value={scenario}
           onChange={setScenario}
@@ -75,13 +128,15 @@ const EnquiryForm = () => {
         />
         <div className="mt-6 flex flex-col items-stretch gap-4 md:flex-row md:items-center">
           <button
-            className={`${actionClassName} bg-brand text-white hover:bg-brand-hover`}
+            className={`${actionClassName} bg-brand text-white hover:bg-brand-hover disabled:hover:bg-brand`}
+            disabled={isSubmitting}
             type="submit"
           >
-            Find guidance
+            {isSubmitting ? 'Finding guidance...' : 'Find guidance'}
           </button>
           <button
-            className={`${actionClassName} bg-surface text-ink hover:bg-surface-hover`}
+            className={`${actionClassName} bg-surface text-ink hover:bg-surface-hover disabled:hover:bg-surface`}
+            disabled={isSubmitting}
             type="button"
             onClick={handleReset}
           >
