@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TRIAGE_PATH } from './api/triage.ts';
 import App from './App.tsx';
 import {
+  DESCRIPTION_FIELD_ID,
   ERROR_SUMMARY_ID,
   RESULT_HEADING_ID,
   SITUATION_FIELDSET_ID,
@@ -197,7 +198,9 @@ describe('enquiry page', () => {
     const description = screen.getByRole('textbox');
 
     expect(description).toHaveAccessibleName();
-    expect(description.getAttribute('aria-describedby')).toBeTruthy();
+    expect(description.getAttribute('aria-describedby')).toContain(
+      `${DESCRIPTION_FIELD_ID}-route`,
+    );
   });
 
   it('associates a visible label with each situation choice', () => {
@@ -206,6 +209,23 @@ describe('enquiry page', () => {
     for (const radio of screen.getAllByRole('radio')) {
       expect(radio).toHaveAccessibleName();
     }
+  });
+
+  it('keeps major works and repairs as distinct choices', () => {
+    render(<App />);
+
+    const radios = screen.getAllByRole('radio');
+    const labelFor = (radio: HTMLElement) => {
+      const id = radio.getAttribute('id');
+      return id
+        ? (document.querySelector(`label[for="${id}"]`)?.textContent?.trim() ??
+            '')
+        : '';
+    };
+
+    expect(labelFor(radios[1])).not.toBe('');
+    expect(labelFor(radios[2])).not.toBe('');
+    expect(labelFor(radios[1])).not.toBe(labelFor(radios[2]));
   });
 
   it('has no automated accessibility violations on first load', async () => {
@@ -474,6 +494,65 @@ describe('enquiry page', () => {
 
     await waitFor(() => {
       expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
+    });
+  });
+
+  it('returns to the form with values kept after change my answers', async () => {
+    const marker = 'UNIQUE_ENQUIRY_MARKER_change_answers';
+    const user = userEvent.setup();
+    render(<App />);
+
+    const selected = screen.getAllByRole('radio')[1];
+    await user.click(selected);
+    await user.type(screen.getByRole('textbox'), marker);
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    await waitFor(() => {
+      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
+    });
+    expect(screen.getByText(marker)).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: /change my answers/i }),
+    );
+
+    expect(
+      screen.getByRole('button', { name: /find guidance/i }),
+    ).toBeEnabled();
+    expect(screen.getAllByRole('radio')[1]).toBeChecked();
+    expect(screen.getByRole('textbox')).toHaveValue(marker);
+    expect(document.getElementById(RESULT_HEADING_ID)).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(screen.getAllByRole('radio')[1]);
+    });
+  });
+
+  it('focuses the description when changing answers with no situation', async () => {
+    const marker = 'UNIQUE_ENQUIRY_MARKER_description_only';
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByRole('textbox'), marker);
+    await user.click(screen.getByRole('button', { name: /find guidance/i }));
+
+    await waitFor(() => {
+      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: /change my answers/i }),
+    );
+
+    expect(screen.getByRole('textbox')).toHaveValue(marker);
+    expect(
+      screen
+        .getAllByRole('radio')
+        .every((radio) => radio instanceof HTMLInputElement && !radio.checked),
+    ).toBe(true);
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(screen.getByRole('textbox'));
     });
   });
 

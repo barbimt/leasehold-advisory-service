@@ -5,13 +5,14 @@ import { RESULT_HEADING_ID } from '../enquiry/ids.ts';
 import EnquiryRecap from './EnquiryRecap.tsx';
 import GuidanceResourceList from './GuidanceResourceList.tsx';
 import ResultContact from './ResultContact.tsx';
-import StartAgainButton from './StartAgainButton.tsx';
+import ResultActions from './ResultActions.tsx';
 
 type KnownResultProps = {
   topic: TriageTopic;
   description: string;
   scenario: ScenarioValue | null;
   headingRef: RefObject<HTMLHeadingElement | null>;
+  onChangeAnswers: () => void;
   onStartAgain: () => void;
 };
 
@@ -20,6 +21,7 @@ const KnownResult = ({
   description,
   scenario,
   headingRef,
+  onChangeAnswers,
   onStartAgain,
 }: KnownResultProps) => {
   const primaryResources = topic.primaryResource ? [topic.primaryResource] : [];
@@ -80,7 +82,10 @@ const KnownResult = ({
         </p>
       </aside>
       <ResultContact />
-      <StartAgainButton onStartAgain={onStartAgain} />
+      <ResultActions
+        onChangeAnswers={onChangeAnswers}
+        onStartAgain={onStartAgain}
+      />
     </>
   );
 };

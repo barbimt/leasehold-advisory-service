@@ -9,6 +9,7 @@ type TriageResultProps = {
   description: string;
   scenario: ScenarioValue | null;
   headingRef: RefObject<HTMLHeadingElement | null>;
+  onChangeAnswers: () => void;
   onStartAgain: () => void;
 };
 
@@ -17,6 +18,7 @@ const TriageResult = ({
   description,
   scenario,
   headingRef,
+  onChangeAnswers,
   onStartAgain,
 }: TriageResultProps) => {
   if (topic.slug === UNKNOWN_TOPIC_SLUG) {
@@ -26,6 +28,7 @@ const TriageResult = ({
         description={description}
         scenario={scenario}
         headingRef={headingRef}
+        onChangeAnswers={onChangeAnswers}
         onStartAgain={onStartAgain}
       />
     );
@@ -37,6 +40,7 @@ const TriageResult = ({
       description={description}
       scenario={scenario}
       headingRef={headingRef}
+      onChangeAnswers={onChangeAnswers}
       onStartAgain={onStartAgain}
     />
   );

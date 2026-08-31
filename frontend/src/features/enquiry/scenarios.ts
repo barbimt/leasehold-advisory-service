@@ -25,13 +25,13 @@ export const SCENARIO_OPTIONS: ScenarioOption[] = [
   },
   {
     value: 'major_works',
-    label: 'My building needs repairs or major work',
-    hint: 'This includes work to the roof, windows or lifts, or a consultation letter about planned works.',
+    label: 'My building needs large planned works',
+    hint: 'This includes a Section 20 consultation letter, or one-off work such as a new roof or lift. This is not about a repair that has been left undone.',
   },
   {
     value: 'repairs',
-    label: 'Something in my building is not being repaired',
-    hint: 'This includes damp, leaks, or communal areas that are not being maintained.',
+    label: 'Something in my building is not being fixed',
+    hint: 'This includes damp, leaks, or communal maintenance that has not been done. This is not about a letter for future large works.',
   },
   {
     value: 'lease_extension',

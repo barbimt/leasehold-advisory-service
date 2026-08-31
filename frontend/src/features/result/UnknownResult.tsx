@@ -6,13 +6,14 @@ import EnquiryRecap from './EnquiryRecap.tsx';
 import { LEASE_HOME_URL } from './leaseLinks.ts';
 import ResultContact from './ResultContact.tsx';
 import { resultLinkClassName } from './resultLinkClassName.ts';
-import StartAgainButton from './StartAgainButton.tsx';
+import ResultActions from './ResultActions.tsx';
 
 type UnknownResultProps = {
   topic: TriageTopic;
   description: string;
   scenario: ScenarioValue | null;
   headingRef: RefObject<HTMLHeadingElement | null>;
+  onChangeAnswers: () => void;
   onStartAgain: () => void;
 };
 
@@ -21,6 +22,7 @@ const UnknownResult = ({
   description,
   scenario,
   headingRef,
+  onChangeAnswers,
   onStartAgain,
 }: UnknownResultProps) => {
   return (
@@ -66,7 +68,10 @@ const UnknownResult = ({
         </p>
       </aside>
       <ResultContact />
-      <StartAgainButton onStartAgain={onStartAgain} />
+      <ResultActions
+        onChangeAnswers={onChangeAnswers}
+        onStartAgain={onStartAgain}
+      />
     </>
   );
 };

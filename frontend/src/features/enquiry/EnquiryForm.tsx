@@ -27,9 +27,11 @@ const EnquiryForm = () => {
   const [request, setRequest] = useState<RequestState>({ status: 'idle' });
   const [submissionErrorAttempt, setSubmissionErrorAttempt] = useState(0);
   const [resetAttempt, setResetAttempt] = useState(0);
+  const [changeAnswersAttempt, setChangeAnswersAttempt] = useState(0);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const submissionErrorRef = useRef<HTMLDivElement>(null);
   const firstRadioRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const resultHeadingRef = useRef<HTMLHeadingElement>(null);
   const inFlightRef = useRef(false);
   const isSubmitting = request.status === 'submitting';
@@ -65,6 +67,24 @@ const EnquiryForm = () => {
 
     firstRadioRef.current?.focus();
   }, [resetAttempt]);
+
+  useEffect(() => {
+    if (changeAnswersAttempt === 0) {
+      return;
+    }
+
+    const selected =
+      firstRadioRef.current?.form?.querySelector<HTMLInputElement>(
+        'input[name="scenario"]:checked',
+      );
+
+    if (selected) {
+      selected.focus();
+      return;
+    }
+
+    textareaRef.current?.focus();
+  }, [changeAnswersAttempt]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -118,6 +138,18 @@ const EnquiryForm = () => {
     firstRadioRef.current?.focus();
   };
 
+  const handleChangeAnswers = () => {
+    if (inFlightRef.current) {
+      return;
+    }
+
+    setShowError(false);
+    setValidationAttempt(0);
+    setRequest({ status: 'idle' });
+    setSubmissionErrorAttempt(0);
+    setChangeAnswersAttempt((attempt) => attempt + 1);
+  };
+
   if (request.status === 'success') {
     return (
       <TriageResult
@@ -125,6 +157,7 @@ const EnquiryForm = () => {
         description={description}
         scenario={scenario}
         headingRef={resultHeadingRef}
+        onChangeAnswers={handleChangeAnswers}
         onStartAgain={handleReset}
       />
     );
@@ -141,8 +174,8 @@ const EnquiryForm = () => {
         <SubmissionError kind={request.kind} errorRef={submissionErrorRef} />
       ) : null}
       <p className="mb-4">
-        Describe what is happening, or choose a common situation. We will help
-        you find relevant LEASE guidance.
+        Choose a common situation, describe what is happening, or both. We will
+        help you find relevant LEASE guidance.
       </p>
       <p className="mb-6 md:mb-8">
         This tool gives general information. It does not provide personalised
@@ -164,6 +197,7 @@ const EnquiryForm = () => {
           value={description}
           onChange={setDescription}
           hasError={showError}
+          textareaRef={textareaRef}
         />
         <div className="mt-6 flex flex-col items-stretch gap-4 md:flex-row md:items-center">
           <button

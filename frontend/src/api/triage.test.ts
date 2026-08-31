@@ -1,3 +1,4 @@
+import { REQUEST_TIMEOUT_MS } from './http.ts';
 import { TRIAGE_PATH, submitTriage, toTriageRequest } from './triage.ts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -108,6 +109,25 @@ describe('submitTriage', () => {
         kind: 'network',
       }),
     );
+  });
+
+  it('sends a timeout signal with the request', async () => {
+    const timeout = vi.spyOn(AbortSignal, 'timeout');
+
+    await submitTriage('repairs', '');
+
+    expect(timeout).toHaveBeenCalledWith(REQUEST_TIMEOUT_MS);
+    timeout.mockRestore();
+  });
+
+  it('maps a timed-out fetch to a network error', async () => {
+    fetchMock().mockRejectedValueOnce(
+      new DOMException('The operation timed out.', 'TimeoutError'),
+    );
+
+    await expect(submitTriage('repairs', '')).rejects.toMatchObject({
+      kind: 'network',
+    });
   });
 
   it('maps a non-success status to an http error', async () => {

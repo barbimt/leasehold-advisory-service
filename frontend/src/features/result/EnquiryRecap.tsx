@@ -20,15 +20,21 @@ const EnquiryRecap = ({ description, scenario }: EnquiryRecapProps) => {
 
   return (
     <div className="mb-6 border-l-8 border-brand bg-surface py-3 pl-6 pr-4">
-      {trimmedDescription.length > 0 ? (
-        <>
-          <h2 className="mb-2 text-lg font-bold">Your description</h2>
-          <p className="m-0">{trimmedDescription}</p>
-        </>
-      ) : (
+      {scenarioLabel !== null ? (
         <>
           <h2 className="mb-2 text-lg font-bold">The situation you chose</h2>
           <p className="m-0">{scenarioLabel}</p>
+          {trimmedDescription.length > 0 ? (
+            <>
+              <h2 className="mb-2 mt-4 text-lg font-bold">You also told us</h2>
+              <p className="m-0">{trimmedDescription}</p>
+            </>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <h2 className="mb-2 text-lg font-bold">Your description</h2>
+          <p className="m-0">{trimmedDescription}</p>
         </>
       )}
     </div>

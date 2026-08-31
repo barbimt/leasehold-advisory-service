@@ -10,11 +10,34 @@ SCENARIO_TO_TOPIC_SLUG = {
 }
 
 TOPIC_PHRASES = {
-    "service-charges": ("service charge",),
-    "major-works": ("section 20", "major works"),
-    "repairs": ("repair",),
-    "lease-extension": ("lease extension",),
-    "disputes": ("dispute",),
+    "service-charges": (
+        "service charge",
+        "service charges",
+        "ground rent",
+    ),
+    "major-works": (
+        "section 20",
+        "major work",
+        "major works",
+    ),
+    "repairs": (
+        "repair",
+        "repairs",
+        "repairing",
+        "damp",
+        "leak",
+        "leaks",
+        "leaking",
+        "maintenance",
+    ),
+    "lease-extension": (
+        "lease extension",
+        "lease extensions",
+    ),
+    "disputes": (
+        "dispute",
+        "disputes",
+    ),
 }
 
 
@@ -22,6 +45,18 @@ def _normalise(value: str | None) -> str:
     if value is None:
         return ""
     return " ".join(value.split()).casefold()
+
+
+def _contains_phrase(normalised_text: str, phrase: str) -> bool:
+    haystack = normalised_text.split()
+    needle = phrase.split()
+    if not needle or len(needle) > len(haystack):
+        return False
+
+    return any(
+        haystack[index : index + len(needle)] == needle
+        for index in range(len(haystack) - len(needle) + 1)
+    )
 
 
 def classify(
@@ -40,7 +75,7 @@ def classify(
     matched_slugs = [
         slug
         for slug, phrases in TOPIC_PHRASES.items()
-        if any(phrase in normalised_description for phrase in phrases)
+        if any(_contains_phrase(normalised_description, phrase) for phrase in phrases)
     ]
     if len(matched_slugs) != 1:
         return UNKNOWN
