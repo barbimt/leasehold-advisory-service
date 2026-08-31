@@ -15,13 +15,23 @@ See [PLAN.md](PLAN.md) for the original plan, [QUALITY.md](QUALITY.md) for
 review notes, and [AI_USAGE.md](AI_USAGE.md) for how AI-assisted tools were
 used.
 
+## Live demo
+
+- App: https://leasehold-advisory-service-frontend.vercel.app/
+- API: `POST https://leasehold-advisory-service.onrender.com/api/triage/`
+
+The React app is on Vercel. The Django API is on Render. Local development
+still uses the Vite `/api` proxy with an empty `VITE_API_BASE_URL`. The
+Render free instance may sleep; the first request after idle can fail or
+take about a minute, then retry.
+
 ## What this prototype does not cover
 
 - Login or user accounts
 - Saving enquiry text
 - Park-home enquiries
 - Generated legal answers
-- Production hosting
+- Always-on production hosting
 
 GOV.UK Design System patterns informed errors and focus. GOV.UK Frontend is
 not installed. Mapping individual HTTP 400 field errors into the form is
@@ -138,6 +148,14 @@ topic instead of guessing.
 
 ```sh
 curl http://127.0.0.1:8000/api/triage/ \
+  -H 'Content-Type: application/json' \
+  -d '{"scenario":"repairs","description":"There is a leak in the building."}'
+```
+
+The same body works against the public API:
+
+```sh
+curl https://leasehold-advisory-service.onrender.com/api/triage/ \
   -H 'Content-Type: application/json' \
   -d '{"scenario":"repairs","description":"There is a leak in the building."}'
 ```
