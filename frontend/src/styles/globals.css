@@ -3,7 +3,7 @@
 @theme {
   --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   --color-brand: #0a4d4a;
-  --color-brand-hover: color-mix(in srgb, #0a4d4a 88%, #000);
+  --color-brand-hover: #041f1e;
   --color-ink: #313131;
   --color-muted: #5c5c5c;
   --color-page: #ffffff;

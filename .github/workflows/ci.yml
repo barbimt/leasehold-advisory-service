@@ -30,29 +30,10 @@ jobs:
     defaults:
       run:
         working-directory: backend
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: leasehold
-          POSTGRES_USER: leasehold
-          POSTGRES_PASSWORD: leasehold
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U leasehold -d leasehold"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       DJANGO_SECRET_KEY: ci-secret-key-not-for-production
       DJANGO_DEBUG: 'true'
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
-      DATABASE_NAME: leasehold
-      DATABASE_USER: leasehold
-      DATABASE_PASSWORD: leasehold
-      DATABASE_HOST: localhost
-      DATABASE_PORT: '5432'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -45,6 +45,7 @@ export const SCENARIO_OPTIONS: ScenarioOption[] = [
   {
     value: 'not_sure',
     label: "Something else, or I'm not sure",
+    hint: 'If none of these situations fits, we will not guess. We will show a safe next step instead.',
   },
 ];
 

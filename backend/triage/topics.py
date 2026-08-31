@@ -248,3 +248,13 @@ TOPICS_BY_SLUG = {
         UNKNOWN,
     )
 }
+
+
+def curated_guidance_urls() -> tuple[str, ...]:
+    urls: dict[str, None] = {}
+    for topic in TOPICS_BY_SLUG.values():
+        if topic.primary_resource is not None:
+            urls[topic.primary_resource.url] = None
+        for resource in topic.related_resources:
+            urls[resource.url] = None
+    return tuple(urls)

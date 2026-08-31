@@ -45,8 +45,8 @@ const EnquiryTextarea = ({
         Describe what is happening
       </label>
       <p id={routeId} className="mb-4 text-muted">
-        If you choose a situation, we use that to find guidance. You can still
-        add a short description for extra context.
+        If you choose a situation, that is what we use to find guidance. You can
+        still add a short description. We will show it with the result.
       </p>
       <p id={hintId} className="mb-4 text-muted">
         Use your own words. A sentence or two is enough.

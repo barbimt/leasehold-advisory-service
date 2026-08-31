@@ -3,6 +3,7 @@ import type { TriageTopic } from '../../api/triage.ts';
 import type { ScenarioValue } from '../enquiry/scenarios.ts';
 import { RESULT_HEADING_ID } from '../enquiry/ids.ts';
 import EnquiryRecap from './EnquiryRecap.tsx';
+import GeneralInformation from './GeneralInformation.tsx';
 import GuidanceResourceList from './GuidanceResourceList.tsx';
 import ResultContact from './ResultContact.tsx';
 import ResultActions from './ResultActions.tsx';
@@ -43,7 +44,7 @@ const KnownResult = ({
       <EnquiryRecap description={description} scenario={scenario} />
       <section
         aria-labelledby="result-next-step-heading"
-        className="mb-6 border border-ink p-4"
+        className="mb-6 rounded-sm border border-ink p-4"
       >
         <h2 className="mb-2 text-lg font-bold" id="result-next-step-heading">
           Your next step
@@ -69,18 +70,7 @@ const KnownResult = ({
         headingId="result-related-heading"
         resources={topic.relatedResources}
       />
-      <aside
-        aria-labelledby="result-general-info-heading"
-        className="mb-6 border-l-8 border-brand bg-surface py-3 pl-6 pr-4"
-      >
-        <h2 className="mb-2 text-lg font-bold" id="result-general-info-heading">
-          General information
-        </h2>
-        <p className="m-0">
-          This tool gives general information. It helps you find LEASE guidance.
-          It does not provide personalised legal advice.
-        </p>
-      </aside>
+      <GeneralInformation />
       <ResultContact />
       <ResultActions
         onChangeAnswers={onChangeAnswers}

@@ -9,9 +9,8 @@ type SubmissionErrorProps = {
 
 const messageByKind: Record<ApiErrorKind, string> = {
   network: 'We could not reach the service. Try again later.',
-  http: 'We could not complete your request. Check your answers and try again.',
-  'invalid-response':
-    'We could not complete your request. Check your answers and try again.',
+  http: 'We could not complete your request. Try again later.',
+  'invalid-response': 'We could not complete your request. Try again later.',
 };
 
 const SubmissionError = ({ kind, errorRef }: SubmissionErrorProps) => {

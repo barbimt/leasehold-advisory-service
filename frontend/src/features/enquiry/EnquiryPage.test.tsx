@@ -3,83 +3,28 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 import axe from 'axe-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { TRIAGE_PATH } from './api/triage.ts';
-import App from './App.tsx';
+import { TRIAGE_PATH } from '../../api/triage.ts';
+import App from '../../App.tsx';
 import {
   DESCRIPTION_FIELD_ID,
   ERROR_SUMMARY_ID,
   RESULT_HEADING_ID,
   SITUATION_FIELDSET_ID,
   SUBMISSION_ERROR_ID,
-} from './features/enquiry/ids.ts';
-import { SCENARIO_OPTIONS } from './features/enquiry/scenarios.ts';
+} from './ids.ts';
+import { SCENARIO_OPTIONS } from './scenarios.ts';
 import {
-  LEASE_ENQUIRY_URL,
-  LEASE_HOME_URL,
-} from './features/result/leaseLinks.ts';
-
-const primaryResource = {
-  title: 'Primary guide',
-  summary: 'A blurb',
-  url: 'https://www.lease-advice.org/example-primary/',
-  linkText: 'Read the primary guide',
-};
-
-const relatedResource = {
-  title: 'Related guide',
-  summary: 'Another blurb',
-  url: 'https://www.lease-advice.org/example-related/',
-  linkText: 'Read the related guide',
-};
-
-const topic = {
-  slug: 'repairs',
-  label: 'Repairs',
-  summary: 'A summary',
-  nextStep: 'A next step',
-  primaryResource,
-  relatedResources: [relatedResource],
-};
-
-const unknownTopic = {
-  slug: 'unknown',
-  label: 'Unknown / not sure',
-  summary: 'A summary',
-  nextStep: 'A next step',
-  primaryResource: null,
-  relatedResources: [],
-};
-
-const jsonResponse = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-const fetchMock = () => vi.mocked(fetch);
-
-const postedBody = () => {
-  const init = fetchMock().mock.calls[0]?.[1];
-  const body =
-    init && typeof init === 'object' && 'body' in init ? init.body : undefined;
-  if (typeof body !== 'string') {
-    throw new Error('Expected JSON request body');
-  }
-  return JSON.parse(body) as Record<string, unknown>;
-};
-
-const submitForm = async () => {
-  const user = userEvent.setup();
-  await user.click(screen.getByRole('button', { name: /find guidance/i }));
-  return user;
-};
+  fetchMock,
+  jsonResponse,
+  postedBody,
+  stubTriageFetch,
+  submitForm,
+  topic,
+} from '../../test/appTest.ts';
 
 describe('enquiry page', () => {
   beforeEach(() => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.resolve(jsonResponse({ topic }))),
-    );
+    stubTriageFetch();
   });
 
   afterEach(() => {
@@ -329,41 +274,6 @@ describe('enquiry page', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('replaces the form with a result after a successful response', async () => {
-    const user = userEvent.setup();
-    render(<App />);
-
-    await user.click(screen.getAllByRole('radio')[0]);
-    await user.type(screen.getByRole('textbox'), 'The roof needs work');
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    const heading = await waitFor(() => {
-      const node = document.getElementById(RESULT_HEADING_ID);
-      expect(node).toBeInTheDocument();
-      return node;
-    });
-
-    expect(heading?.textContent).toEqual(expect.any(String));
-    expect(heading?.textContent?.trim()).not.toBe('');
-    expect(heading?.textContent).toMatch(/relate to/i);
-    expect(
-      screen.queryByRole('button', { name: /find guidance/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      document.getElementById(SUBMISSION_ERROR_ID),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /primary guide/i }),
-    ).toHaveAttribute('href', primaryResource.url);
-    expect(
-      screen.getByRole('link', { name: /related guide/i }),
-    ).toHaveAttribute('href', relatedResource.url);
-
-    await waitFor(() => {
-      expect(document.activeElement).toBe(heading);
-    });
-  });
-
   it('shows accessible feedback when the request fails and keeps values', async () => {
     const marker = 'UNIQUE_ENQUIRY_MARKER_9f3c2a';
     fetchMock().mockRejectedValueOnce(new TypeError('Failed to fetch'));
@@ -407,186 +317,8 @@ describe('enquiry page', () => {
     });
 
     expect(error?.textContent?.trim()).not.toBe('');
+    expect(error?.textContent).toMatch(/try again later/i);
+    expect(error?.textContent).not.toMatch(/check your answers/i);
     expect(screen.getAllByRole('radio')[0]).toBeChecked();
-  });
-
-  it('does not present unknown as a known topic result', async () => {
-    fetchMock().mockResolvedValueOnce(jsonResponse({ topic: unknownTopic }));
-
-    const user = userEvent.setup();
-    render(<App />);
-
-    await user.click(screen.getAllByRole('radio')[0]);
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    const heading = await waitFor(() => {
-      const node = document.getElementById(RESULT_HEADING_ID);
-      expect(node).toBeInTheDocument();
-      return node;
-    });
-
-    expect(heading?.textContent).not.toMatch(/relate to/i);
-    expect(
-      screen.queryByRole('link', { name: /primary guide/i }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /browse all/i })).toHaveAttribute(
-      'href',
-      LEASE_HOME_URL,
-    );
-    expect(
-      screen.getByRole('link', { name: /request advice/i }),
-    ).toHaveAttribute('href', LEASE_ENQUIRY_URL);
-  });
-
-  it('treats unknown slug as unmatched even if resources are present', async () => {
-    fetchMock().mockResolvedValueOnce(
-      jsonResponse({
-        topic: {
-          ...unknownTopic,
-          primaryResource,
-          relatedResources: [relatedResource],
-        },
-      }),
-    );
-
-    const user = userEvent.setup();
-    render(<App />);
-
-    await user.click(screen.getAllByRole('radio')[0]);
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    const heading = await waitFor(() => {
-      const node = document.getElementById(RESULT_HEADING_ID);
-      expect(node).toBeInTheDocument();
-      return node;
-    });
-
-    expect(heading?.textContent).not.toMatch(/relate to/i);
-    expect(
-      screen.queryByRole('link', { name: /primary guide/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('returns to a clean form after start again', async () => {
-    const user = userEvent.setup();
-    render(<App />);
-
-    await user.click(screen.getAllByRole('radio')[0]);
-    await user.type(screen.getByRole('textbox'), 'The roof needs work');
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    await waitFor(() => {
-      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
-    });
-
-    await user.click(screen.getByRole('button', { name: /start again/i }));
-
-    expect(
-      screen.getByRole('button', { name: /find guidance/i }),
-    ).toBeEnabled();
-    expect(
-      screen
-        .getAllByRole('radio')
-        .every((radio) => radio instanceof HTMLInputElement && !radio.checked),
-    ).toBe(true);
-    expect(screen.getByRole('textbox')).toHaveValue('');
-    expect(document.getElementById(RESULT_HEADING_ID)).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
-    });
-  });
-
-  it('returns to the form with values kept after change my answers', async () => {
-    const marker = 'UNIQUE_ENQUIRY_MARKER_change_answers';
-    const user = userEvent.setup();
-    render(<App />);
-
-    const selected = screen.getAllByRole('radio')[1];
-    await user.click(selected);
-    await user.type(screen.getByRole('textbox'), marker);
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    await waitFor(() => {
-      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
-    });
-    expect(screen.getByText(marker)).toBeInTheDocument();
-
-    await user.click(
-      screen.getByRole('button', { name: /change my answers/i }),
-    );
-
-    expect(
-      screen.getByRole('button', { name: /find guidance/i }),
-    ).toBeEnabled();
-    expect(screen.getAllByRole('radio')[1]).toBeChecked();
-    expect(screen.getByRole('textbox')).toHaveValue(marker);
-    expect(document.getElementById(RESULT_HEADING_ID)).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(document.activeElement).toBe(screen.getAllByRole('radio')[1]);
-    });
-  });
-
-  it('focuses the description when changing answers with no situation', async () => {
-    const marker = 'UNIQUE_ENQUIRY_MARKER_description_only';
-    const user = userEvent.setup();
-    render(<App />);
-
-    await user.type(screen.getByRole('textbox'), marker);
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    await waitFor(() => {
-      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
-    });
-
-    await user.click(
-      screen.getByRole('button', { name: /change my answers/i }),
-    );
-
-    expect(screen.getByRole('textbox')).toHaveValue(marker);
-    expect(
-      screen
-        .getAllByRole('radio')
-        .every((radio) => radio instanceof HTMLInputElement && !radio.checked),
-    ).toBe(true);
-
-    await waitFor(() => {
-      expect(document.activeElement).toBe(screen.getByRole('textbox'));
-    });
-  });
-
-  it('has no automated accessibility violations on a known result', async () => {
-    const user = userEvent.setup();
-    const { container } = render(<App />);
-
-    await user.click(screen.getAllByRole('radio')[0]);
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    await waitFor(() => {
-      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
-    });
-
-    const results = await axe.run(container);
-
-    expect(results.violations).toEqual([]);
-  });
-
-  it('has no automated accessibility violations on an unknown result', async () => {
-    fetchMock().mockResolvedValueOnce(jsonResponse({ topic: unknownTopic }));
-
-    const user = userEvent.setup();
-    const { container } = render(<App />);
-
-    await user.click(screen.getAllByRole('radio')[0]);
-    await user.click(screen.getByRole('button', { name: /find guidance/i }));
-
-    await waitFor(() => {
-      expect(document.getElementById(RESULT_HEADING_ID)).toBeInTheDocument();
-    });
-
-    const results = await axe.run(container);
-
-    expect(results.violations).toEqual([]);
   });
 });

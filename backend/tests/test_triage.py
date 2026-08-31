@@ -134,3 +134,21 @@ def test_repairing_free_text_maps_to_repairs() -> None:
 def test_repair_does_not_match_inside_another_word() -> None:
     topic = classify(description="The damage looks irreparable")
     assert topic.slug == "unknown"
+
+
+def test_repairs_free_text_with_trailing_punctuation_maps_correctly() -> None:
+    topic = classify(description="I need repairs.")
+    assert topic.slug == "repairs"
+
+
+def test_section_20_free_text_with_trailing_punctuation_maps_correctly() -> None:
+    topic = classify(description="We received a Section 20.")
+    assert topic.slug == "major-works"
+
+
+def test_not_sure_scenario_is_used_even_if_description_would_match() -> None:
+    topic = classify(
+        scenario="not_sure",
+        description="My service charges have gone up",
+    )
+    assert topic.slug == "unknown"
