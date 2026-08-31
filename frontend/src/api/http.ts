@@ -1,5 +1,7 @@
 export type ApiErrorKind = 'network' | 'http' | 'invalid-response';
 
+export const REQUEST_TIMEOUT_MS = 10_000;
+
 export class ApiError extends Error {
   readonly kind: ApiErrorKind;
 
@@ -23,6 +25,7 @@ export const postJson = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
   } catch {
     throw new ApiError('network');

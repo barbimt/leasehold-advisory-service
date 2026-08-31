@@ -71,6 +71,11 @@ def test_disputes_free_text_maps_correctly() -> None:
     assert topic.slug == "disputes"
 
 
+def test_disputes_plural_free_text_maps_correctly() -> None:
+    topic = classify(description="I have disputes with the managing agent")
+    assert topic.slug == "disputes"
+
+
 def test_multiple_topics_in_free_text_map_to_unknown() -> None:
     topic = classify(
         description="I have a dispute about my service charges",
@@ -84,3 +89,48 @@ def test_known_scenario_is_used_even_if_description_differs() -> None:
         description="I want a lease extension",
     )
     assert topic.slug == "repairs"
+
+
+def test_major_work_singular_free_text_maps_to_major_works() -> None:
+    topic = classify(description="We need major work on the roof")
+    assert topic.slug == "major-works"
+
+
+def test_ground_rent_free_text_maps_to_service_charges() -> None:
+    topic = classify(description="My ground rent has gone up")
+    assert topic.slug == "service-charges"
+
+
+def test_damp_free_text_maps_to_repairs() -> None:
+    topic = classify(description="There is damp in the hallway")
+    assert topic.slug == "repairs"
+
+
+def test_leak_free_text_maps_to_repairs() -> None:
+    topic = classify(description="There is a leak in the roof")
+    assert topic.slug == "repairs"
+
+
+def test_leaking_free_text_maps_to_repairs() -> None:
+    topic = classify(description="The roof is leaking")
+    assert topic.slug == "repairs"
+
+
+def test_leaks_free_text_maps_to_repairs() -> None:
+    topic = classify(description="There are leaks in the communal area")
+    assert topic.slug == "repairs"
+
+
+def test_maintenance_free_text_maps_to_repairs() -> None:
+    topic = classify(description="Communal maintenance has stopped")
+    assert topic.slug == "repairs"
+
+
+def test_repairing_free_text_maps_to_repairs() -> None:
+    topic = classify(description="Nobody is repairing the stairs")
+    assert topic.slug == "repairs"
+
+
+def test_repair_does_not_match_inside_another_word() -> None:
+    topic = classify(description="The damage looks irreparable")
+    assert topic.slug == "unknown"
