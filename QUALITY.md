@@ -77,8 +77,9 @@ bookmarkable result we do not have.
 
 **Relative `/api` and the Vite proxy.** Locally the browser talks to the Vite
 origin. The default is still the relative `/api/triage/` path. An optional
-public `VITE_API_BASE_URL` can support a separate API origin later. We did
-not add CORS. A split deploy would still need a gateway or CORS.
+public `VITE_API_BASE_URL` can point at a separate API origin. CORS is an
+environment allowlist (`CORS_ALLOWED_ORIGINS`) for that split. Leave it
+empty locally. Do not use allow-all origins.
 
 **Native semantic controls.** Radios, textarea, buttons, labels, and a
 fieldset. Accessibility starts with HTML, not ARIA on generic divs.

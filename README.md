@@ -30,7 +30,8 @@ still out of scope.
 ## Prerequisites
 
 - Node.js 22 (see `.nvmrc`; Node 22+ is required)
-- Python 3.12 (see `.python-version`)
+- Python 3.12 (see `.python-version`; `backend/.python-version` is the same
+  value for a backend-rooted deploy)
 
 The frontend and Django run on your machine. There is no Docker step. Django
 uses a local SQLite file only because Django expects a database setting. You
@@ -65,8 +66,10 @@ python manage.py runserver
 ```
 
 Copy `.env.example` to `.env` inside `backend/`. Django reads `backend/.env`.
-The three variables are `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, and
-`DJANGO_ALLOWED_HOSTS`.
+The required variables are `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, and
+`DJANGO_ALLOWED_HOSTS`. Leave `CORS_ALLOWED_ORIGINS` empty locally so the
+Vite proxy stays same-origin. Set it only when the API is called from a
+separate frontend origin.
 
 ## API
 

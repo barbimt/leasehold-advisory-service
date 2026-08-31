@@ -18,15 +18,15 @@ def require_env(name: str) -> str:
     return value
 
 
+def split_csv(value: str) -> list[str]:
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 SECRET_KEY = require_env("DJANGO_SECRET_KEY")
 
 DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() in {"1", "true", "yes"}
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in require_env("DJANGO_ALLOWED_HOSTS").split(",")
-    if host.strip()
-]
+ALLOWED_HOSTS = split_csv(require_env("DJANGO_ALLOWED_HOSTS"))
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -34,11 +34,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
     "triage",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -100,6 +102,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CORS_ALLOWED_ORIGINS = split_csv(os.getenv("CORS_ALLOWED_ORIGINS", ""))
 
 REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
