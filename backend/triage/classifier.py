@@ -1,4 +1,8 @@
+import re
+
 from triage.topics import TOPICS_BY_SLUG, UNKNOWN, Topic
+
+_NON_WORD = re.compile(r"[^\w\s]+", re.UNICODE)
 
 SCENARIO_TO_TOPIC_SLUG = {
     "service_charges": "service-charges",
@@ -47,6 +51,10 @@ def _normalise(value: str | None) -> str:
     return " ".join(value.split()).casefold()
 
 
+def _normalise_description(value: str | None) -> str:
+    return " ".join(_NON_WORD.sub(" ", _normalise(value)).split())
+
+
 def _contains_phrase(normalised_text: str, phrase: str) -> bool:
     haystack = normalised_text.split()
     needle = phrase.split()
@@ -68,7 +76,7 @@ def classify(
     if scenario_slug is not None:
         return TOPICS_BY_SLUG[scenario_slug]
 
-    normalised_description = _normalise(description)
+    normalised_description = _normalise_description(description)
     if not normalised_description:
         return UNKNOWN
 
