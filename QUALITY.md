@@ -1,8 +1,7 @@
 # Quality notes and self review
 
-This is the Part 3 review for the take-home. It covers data, accessibility,
-the main technical choices, what I would challenge in a code review, and what
-I would do next.
+Notes on data, access, and the main technical choices, plus gaps I would
+still flag and what I would do next.
 
 ## Personal data and security
 
@@ -39,9 +38,14 @@ long as needed, limit who can see them, and delete them on request.
 
 ## Accessibility
 
-**Checks.** ESLint `jsx-a11y`, axe-core in Vitest (load, invalid submit,
-known result, unknown result), plus a manual keyboard pass, zoom/reflow, a
-contrast spot-check, and a VoiceOver spot-check.
+**Checks.** ESLint `jsx-a11y` and axe-core in Vitest (first load, invalid
+submit, known result, unknown result). Manual checks used the browser
+accessibility tree, accessible names and descriptions, focus after each
+main action (`document.activeElement`), a keyboard journey, zoom/reflow at
+200% and 400% viewport equivalents, and a contrast spot-check.
+
+VoiceOver was not run in this environment. Broader screen-reader testing is
+listed under future work.
 
 **What we improved in this pass.** Clearer privacy and situation copy. Service
 errors no longer say “check your answers”. The document title updates on the
@@ -54,43 +58,37 @@ avoid noisy screen-reader updates. Our limit is 2000 characters, so most
 people never get close. If the limit were much lower, I would look at delayed
 or threshold announcements, not per-keystroke live regions.
 
-**What we would do next.** Broader assistive-technology testing (for example
-NVDA, JAWS, and mobile). The footer “Accessibility statement” and “Privacy”
+**What we would do next.** Test with VoiceOver, NVDA, JAWS, and mobile
+assistive technology. The footer “Accessibility statement” and “Privacy”
 links go to lease-advice.org. They describe LEASE’s live site, not this
 prototype.
 
-This work aims at WCAG 2.2 AA. Axe passing is not a claim that the prototype
-meets AA.
+These checks follow WCAG 2.2 AA as a guide. They are not a claim that the
+prototype meets AA. Axe passing is not sufficient on its own.
 
 ## Key technical decisions
 
-**Local React state, not Redux or Zustand.** One form owns the journey. A
-global store would add moving parts with no extra screens that share data.
+**Local React state.** One form owns the enquiry and the result. There is
+nothing else on screen that needs to share that data.
 
-**No React Router.** The result lives in memory after POST. A URL cannot
-rebuild it without storing or replaying the enquiry. Extra routes would
-suggest bookmarkable results we do not have.
+**The result stays in memory after POST.** A URL could not rebuild it without
+storing or replaying the enquiry, so extra routes would promise a
+bookmarkable result we do not have.
 
-**Native `fetch`, not Axios or TanStack Query.** One POST, one response, a
-few error kinds. A query library would be unused weight.
-
-**Relative `/api` plus the Vite proxy.** Locally the browser talks to the
-Vite origin. We did not hard-code Django’s URL or add CORS. Trade-off:
+**Relative `/api` and the Vite proxy.** Locally the browser talks to the Vite
+origin. We did not hard-code Django’s URL or add CORS. Trade-off:
 `vite preview` and a split deploy would need a gateway or CORS later.
-
-**Tailwind for the visual layer.** Layout stays in the components. We do not
-ship a GOV.UK CSS kit.
 
 **Native semantic controls.** Radios, textarea, buttons, labels, and a
 fieldset. Accessibility starts with HTML, not ARIA on generic divs.
 
-**GOV.UK Design System as guidance, GOV.UK Frontend not added.** We wanted
-clear errors, focus, and inset-style notices. We do not ship GDS branding or
-a large Sass stack that is not LEASE’s.
+**GOV.UK Design System as guidance.** We wanted clear errors, focus, and
+inset-style notices. We did not install GOV.UK Frontend. This is a LEASE
+prototype, not a GOV.UK branded service, and a large Sass kit would not earn
+its place here.
 
-**Deterministic classifier, not fuzzy matching or an LLM.** The phrase list
-is small, visible in code, and easy to test. It will miss wording we did not
-list. That is accepted for this slice.
+**Deterministic classifier.** A small phrase list in code, easy to read and
+test. It will miss wording we did not list. That is accepted for this slice.
 
 **Backend owns controlled guidance.** The API returns curated titles,
 summaries, and LEASE URLs. The UI does not invent links or advice.
@@ -98,9 +96,9 @@ summaries, and LEASE URLs. The UI does not invent links or advice.
 **Unknown is a valid outcome.** If we are not sure, we do not guess a topic.
 That is safer than a wrong next step.
 
-**No Wagtail and no enquiry database.** Editors do not need a CMS in this
-slice, and we chose not to keep enquiry text. Postgres and Docker had no
-product job, so they are gone.
+**SQLite only.** Django needs a database setting. We do not store enquiries.
+Postgres and Docker had no product job, so they are not part of the
+prototype.
 
 ## Self code review
 
@@ -122,7 +120,7 @@ product story.
 a little awkward but consistent in each layer.
 
 **Accessibility gaps.** Title updates help. Character count is a hint, not a
-live region. We have not tested with a full AT matrix.
+live region. We have not tested with a full assistive-technology set.
 
 **Would I merge this?** Yes for a take-home prototype, with the limits above
 written down. I would not ship it to the public internet without rate
@@ -130,31 +128,16 @@ limiting, a real secret, and `DEBUG` off.
 
 ## Future improvements
 
-The main classifier limit is not “a few missing synonyms”. The phrase list is
-simple, transparent, and testable. As vocabulary and topics grow, every new
-wording becomes another string to maintain, and two topics in one sentence
-still collapse to unknown.
+The current classifier is a small, deterministic phrase list. That is simple,
+transparent, and suitable for this prototype. If real user language showed
+that this approach is too limited, a more capable classification method could
+be evaluated later. It would still route into the same curated topics, fall
+back to unknown when unsure, and never generate legal advice.
 
-If matching needed to get better, I would do it in stages:
+Other later work that follows from what this slice cannot do yet:
 
-1. Stronger text normalisation (punctuation is in this pass; then things like
-   quotes and hyphens), without changing the matching model.
-2. Lemmatisation or concept-based deterministic matching. Still a controlled
-   map. Still unknown when more than one topic matches.
-3. Semantic or embedding-based classification into the same controlled slugs.
-4. Bounded AI-assisted classification. A model may only choose from the LEASE
-   topic list. It must use confidence thresholds, fall back to unknown or a
-   short clarification when unsure, and never generate legal advice.
-
-Any probabilistic or AI-assisted approach stays a router into curated
-guidance, not an advice engine.
-
-Other later work that would earn its place:
-
-- Wagtail, if editors need to change guidance copy and URLs without a code
-  change
-- Checks for broken LEASE guidance URLs
 - A short clarification when we cannot match, without guessing
-- Broader screen-reader and assistive-technology testing
+- Periodic checks of curated LEASE URLs (`python manage.py check_guidance_links`)
+- Broader assistive-technology testing
 - Technical monitoring (counts, timings, error rates, maybe topic slug)
-  without logging raw enquiry text
+  without logging raw enquiry text, if the service were deployed
