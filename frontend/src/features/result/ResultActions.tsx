@@ -1,10 +1,11 @@
+import { appLinkClassName } from '../../components/appLinkClassName.ts';
+
 type ResultActionsProps = {
   onChangeAnswers: () => void;
   onStartAgain: () => void;
 };
 
-const actionClassName =
-  'cursor-pointer border-0 bg-transparent p-0 text-left text-brand underline underline-offset-2 transition-colors duration-150 hover:text-brand-hover motion-reduce:transition-none';
+const actionClassName = `cursor-pointer border-0 bg-transparent p-0 text-left ${appLinkClassName.default}`;
 
 const ResultActions = ({
   onChangeAnswers,

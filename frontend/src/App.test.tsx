@@ -346,6 +346,7 @@ describe('enquiry page', () => {
     expect(heading?.textContent).toEqual(expect.any(String));
     expect(heading?.textContent?.trim()).not.toBe('');
     expect(heading?.textContent).toMatch(/relate to/i);
+    expect(document.title).toMatch(/relate to/i);
     expect(
       screen.queryByRole('button', { name: /find guidance/i }),
     ).not.toBeInTheDocument();
@@ -407,6 +408,8 @@ describe('enquiry page', () => {
     });
 
     expect(error?.textContent?.trim()).not.toBe('');
+    expect(error?.textContent).toMatch(/try again later/i);
+    expect(error?.textContent).not.toMatch(/check your answers/i);
     expect(screen.getAllByRole('radio')[0]).toBeChecked();
   });
 
@@ -426,6 +429,7 @@ describe('enquiry page', () => {
     });
 
     expect(heading?.textContent).not.toMatch(/relate to/i);
+    expect(document.title).not.toMatch(/relate to/i);
     expect(
       screen.queryByRole('link', { name: /primary guide/i }),
     ).not.toBeInTheDocument();

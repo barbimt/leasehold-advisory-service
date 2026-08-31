@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import AppLink from '../../components/AppLink.tsx';
 import { ERROR_SUMMARY_ID, SITUATION_FIELDSET_ID } from './ids.ts';
 
 type ErrorSummaryProps = {
@@ -19,12 +20,9 @@ const ErrorSummary = ({ summaryRef }: ErrorSummaryProps) => {
       <div>
         <ul className="m-0 list-disc pl-5">
           <li>
-            <a
-              className="font-bold text-error underline"
-              href={`#${SITUATION_FIELDSET_ID}`}
-            >
+            <AppLink href={`#${SITUATION_FIELDSET_ID}`} variant="error">
               Choose a situation or tell us briefly what is happening.
-            </a>
+            </AppLink>
           </li>
         </ul>
       </div>

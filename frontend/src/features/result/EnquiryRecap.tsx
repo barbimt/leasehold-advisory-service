@@ -1,3 +1,4 @@
+import InsetNotice from '../../components/InsetNotice.tsx';
 import type { ScenarioValue } from '../enquiry/scenarios.ts';
 import { SCENARIO_OPTIONS } from '../enquiry/scenarios.ts';
 
@@ -19,7 +20,7 @@ const EnquiryRecap = ({ description, scenario }: EnquiryRecapProps) => {
   }
 
   return (
-    <div className="mb-6 border-l-8 border-brand bg-surface py-3 pl-6 pr-4">
+    <InsetNotice className="mb-6">
       {scenarioLabel !== null ? (
         <>
           <h2 className="mb-2 text-lg font-bold">The situation you chose</h2>
@@ -37,7 +38,7 @@ const EnquiryRecap = ({ description, scenario }: EnquiryRecapProps) => {
           <p className="m-0">{trimmedDescription}</p>
         </>
       )}
-    </div>
+    </InsetNotice>
   );
 };
 

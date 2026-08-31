@@ -1,5 +1,5 @@
 import type { GuidanceResource } from '../../api/triage.ts';
-import { resultLinkClassName } from './resultLinkClassName.ts';
+import AppLink from '../../components/AppLink.tsx';
 
 type GuidanceResourceListProps = {
   heading: string;
@@ -26,9 +26,7 @@ const GuidanceResourceList = ({
           <li key={resource.url}>
             <h3 className="mb-1 text-lg font-bold">{resource.title}</h3>
             <p className="mb-2">{resource.summary}</p>
-            <a className={resultLinkClassName} href={resource.url}>
-              {resource.linkText}
-            </a>
+            <AppLink href={resource.url}>{resource.linkText}</AppLink>
           </li>
         ))}
       </ul>

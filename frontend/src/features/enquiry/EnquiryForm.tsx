@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { ApiError } from '../../api/http.ts';
-import { submitTriage, type TriageTopic } from '../../api/triage.ts';
+import {
+  UNKNOWN_TOPIC_SLUG,
+  submitTriage,
+  type TriageTopic,
+} from '../../api/triage.ts';
 import TriageResult from '../result/TriageResult.tsx';
 import EnquiryTextarea from './EnquiryTextarea.tsx';
 import ErrorSummary from './ErrorSummary.tsx';
@@ -12,6 +16,9 @@ import { hasMeaningfulInput, type ScenarioValue } from './scenarios.ts';
 
 const actionClassName =
   'w-full cursor-pointer rounded-sm px-6 py-3 text-lg font-semibold leading-snug transition-colors duration-150 motion-reduce:transition-none disabled:cursor-not-allowed md:w-auto';
+
+const DOCUMENT_TITLE_BASE = 'Leasehold Advisory Service';
+const DOCUMENT_TITLE_FORM = `Find the right next step – ${DOCUMENT_TITLE_BASE}`;
 
 type RequestState =
   | { status: 'idle' }
@@ -58,6 +65,18 @@ const EnquiryForm = () => {
     }
 
     resultHeadingRef.current?.focus();
+  }, [request]);
+
+  useEffect(() => {
+    if (request.status === 'success') {
+      document.title =
+        request.topic.slug === UNKNOWN_TOPIC_SLUG
+          ? `We could not match this to a specific topic – ${DOCUMENT_TITLE_BASE}`
+          : `Your question may relate to ${request.topic.label} – ${DOCUMENT_TITLE_BASE}`;
+      return;
+    }
+
+    document.title = DOCUMENT_TITLE_FORM;
   }, [request]);
 
   useEffect(() => {
@@ -179,7 +198,8 @@ const EnquiryForm = () => {
       </p>
       <p className="mb-6 md:mb-8">
         This tool gives general information. It does not provide personalised
-        legal advice. Information you enter is not saved.
+        legal advice. We use what you enter only to find guidance. We do not
+        store it.
       </p>
       <PrivacyNotice />
       <form

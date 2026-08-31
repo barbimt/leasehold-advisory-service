@@ -1,3 +1,5 @@
+import AppLink from './AppLink.tsx';
+
 const footerLinks = [
   {
     href: 'https://www.lease-advice.org/accessibility-statement/',
@@ -28,12 +30,9 @@ const Footer = () => {
         <ul className="m-0 flex list-none flex-col gap-4 p-0 md:flex-row md:flex-wrap md:gap-x-6 md:gap-y-4">
           {footerLinks.map((link) => (
             <li className="m-0" key={link.label}>
-              <a
-                className="text-white underline underline-offset-2 transition-colors duration-150 hover:text-accent motion-reduce:transition-none"
-                href={link.href}
-              >
+              <AppLink href={link.href} variant="onDark">
                 {link.label}
-              </a>
+              </AppLink>
             </li>
           ))}
         </ul>

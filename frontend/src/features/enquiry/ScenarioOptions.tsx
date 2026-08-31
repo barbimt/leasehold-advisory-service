@@ -23,7 +23,6 @@ const ScenarioOptions = ({
         className="m-0 min-w-0 border-0 p-0"
         id={SITUATION_FIELDSET_ID}
         aria-describedby={describedBy}
-        aria-invalid={hasError ? true : undefined}
       >
         <legend className="mb-4 p-0 text-3xl font-bold leading-tight">
           What do you need help with?
@@ -45,7 +44,7 @@ const ScenarioOptions = ({
                 key={option.value}
               >
                 <input
-                  className="mt-1 size-5 shrink-0 accent-brand"
+                  className="mt-1 size-5 shrink-0 cursor-pointer accent-brand"
                   ref={index === 0 ? firstRadioRef : undefined}
                   id={inputId}
                   name="scenario"
@@ -57,7 +56,10 @@ const ScenarioOptions = ({
                   }}
                   aria-describedby={hintId}
                 />
-                <label className="min-w-0 flex-1 font-bold" htmlFor={inputId}>
+                <label
+                  className="min-w-0 flex-1 cursor-pointer font-bold"
+                  htmlFor={inputId}
+                >
                   {option.label}
                 </label>
                 {option.hint ? (

@@ -1,11 +1,12 @@
 import type { RefObject } from 'react';
 import type { TriageTopic } from '../../api/triage.ts';
+import AppLink from '../../components/AppLink.tsx';
 import type { ScenarioValue } from '../enquiry/scenarios.ts';
 import { RESULT_HEADING_ID } from '../enquiry/ids.ts';
 import EnquiryRecap from './EnquiryRecap.tsx';
+import GeneralInformation from './GeneralInformation.tsx';
 import { LEASE_HOME_URL } from './leaseLinks.ts';
 import ResultContact from './ResultContact.tsx';
-import { resultLinkClassName } from './resultLinkClassName.ts';
 import ResultActions from './ResultActions.tsx';
 
 type UnknownResultProps = {
@@ -40,7 +41,7 @@ const UnknownResult = ({
       <EnquiryRecap description={description} scenario={scenario} />
       <section
         aria-labelledby="unknown-next-step-heading"
-        className="mb-6 border border-ink p-4"
+        className="mb-6 rounded-sm border border-ink p-4"
       >
         <h2 className="mb-2 text-lg font-bold" id="unknown-next-step-heading">
           What you can do next
@@ -48,25 +49,9 @@ const UnknownResult = ({
         <p className="m-0">{topic.nextStep}</p>
       </section>
       <p className="mb-4">
-        <a className={resultLinkClassName} href={LEASE_HOME_URL}>
-          Browse all LEASE guidance
-        </a>
+        <AppLink href={LEASE_HOME_URL}>Browse all LEASE guidance</AppLink>
       </p>
-      <aside
-        aria-labelledby="unknown-general-info-heading"
-        className="mb-6 border-l-8 border-brand bg-surface py-3 pl-6 pr-4"
-      >
-        <h2
-          className="mb-2 text-lg font-bold"
-          id="unknown-general-info-heading"
-        >
-          General information
-        </h2>
-        <p className="m-0">
-          This tool gives general information. It does not provide personalised
-          legal advice.
-        </p>
-      </aside>
+      <GeneralInformation />
       <ResultContact />
       <ResultActions
         onChangeAnswers={onChangeAnswers}
