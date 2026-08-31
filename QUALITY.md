@@ -76,8 +76,9 @@ storing or replaying the enquiry, so extra routes would promise a
 bookmarkable result we do not have.
 
 **Relative `/api` and the Vite proxy.** Locally the browser talks to the Vite
-origin. We did not hard-code Django’s URL or add CORS. Trade-off:
-`vite preview` and a split deploy would need a gateway or CORS later.
+origin. The default is still the relative `/api/triage/` path. An optional
+public `VITE_API_BASE_URL` can support a separate API origin later. We did
+not add CORS. A split deploy would still need a gateway or CORS.
 
 **Native semantic controls.** Radios, textarea, buttons, labels, and a
 fieldset. Accessibility starts with HTML, not ARIA on generic divs.
@@ -137,7 +138,8 @@ back to unknown when unsure, and never generate legal advice.
 Other later work that follows from what this slice cannot do yet:
 
 - A short clarification when we cannot match, without guessing
-- Periodic checks of curated LEASE URLs (`python manage.py check_guidance_links`)
+- Periodic checks of curated LEASE URLs (`python manage.py check_guidance_links`,
+  also available as a manual GitHub Action)
 - Broader assistive-technology testing
 - Technical monitoring (counts, timings, error rates, maybe topic slug)
   without logging raw enquiry text, if the service were deployed

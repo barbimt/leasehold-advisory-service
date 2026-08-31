@@ -12,6 +12,14 @@ export class ApiError extends Error {
   }
 }
 
+export const resolveApiUrl = (path: string): string => {
+  const base = String(import.meta.env.VITE_API_BASE_URL ?? '')
+    .trim()
+    .replace(/\/+$/, '');
+
+  return base === '' ? path : `${base}${path}`;
+};
+
 export const postJson = async (
   path: string,
   body: unknown,
@@ -19,7 +27,7 @@ export const postJson = async (
   let response: Response;
 
   try {
-    response = await fetch(path, {
+    response = await fetch(resolveApiUrl(path), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
