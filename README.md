@@ -70,16 +70,6 @@ For more detail:
 - [QUALITY.md](QUALITY.md) — quality decisions, self review and future improvements
 - [AI_USAGE.md](AI_USAGE.md) — how AI-assisted tools were used
 
-## What this prototype doesn't cover
-
-This first version intentionally doesn't include:
-
-- login or user accounts
-- storing enquiries
-- park-home enquiries
-- personalised or generated legal advice
-- a full content-management workflow
-
 ## Prerequisites
 
 - Node.js 22+
@@ -283,3 +273,13 @@ python manage.py check_guidance_links
 The same check is also available from the **GitHub Actions** tab using the manual **Check guidance links** workflow.
 
 It isn't part of normal CI because the external website can be temporarily unavailable or block automated requests without there being a problem with this application.
+
+## What this prototype doesn't cover
+
+This first version intentionally doesn't include:
+
+- login or user accounts
+- storing enquiries
+- park-home enquiries
+- personalised or generated legal advice
+- a full content-management workflow
