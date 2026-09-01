@@ -17,8 +17,6 @@ The React frontend is hosted on Vercel and the Django API is hosted on Render.
 
 > The API uses Render's free tier and may sleep when it hasn't been used for a while. The first request can take longer while the service starts again.
 
-## Demo video
-
 ## How it works
 
 The main flow is:
