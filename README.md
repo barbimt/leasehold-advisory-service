@@ -126,7 +126,8 @@ The API listens at:
 http://127.0.0.1:8000
 ```
 
-You don't need migrations to use triage.
+You don't need migrations to use triage. Django may warn about unapplied
+migrations; you can ignore that.
 
 ### 2. Frontend
 
