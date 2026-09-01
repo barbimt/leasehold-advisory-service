@@ -267,6 +267,8 @@ pytest
 python manage.py check
 ```
 
+GitHub Actions runs the frontend checks and backend Ruff plus pytest on every push and pull request. Django's system check is run locally.
+
 ## Guidance link maintenance
 
 The backend contains curated links to official guidance.

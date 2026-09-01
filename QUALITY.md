@@ -22,7 +22,7 @@ The form uses native HTML controls, labels, `fieldset` and `legend`, clear valid
 
 Automated checks include `jsx-a11y` and axe-core tests. Manual checks covered keyboard navigation, accessible names and descriptions, focus behaviour, contrast, and layout reflow.
 
-The implementation follows WCAG 2.2 AA principles, but automated tools alone can't prove compliance.
+The implementation was designed with WCAG 2.2 AA principles in mind, but automated tools alone can't prove compliance.
 
 For a production service, I would use a wider accessibility test matrix:
 
@@ -132,9 +132,21 @@ The backend has a clear API contract and keeps classification and guidance data 
 
 The service doesn't store enquiry text and doesn't generate legal advice.
 
-Tests cover the main classifier behaviour, API contract, error cases, and user journeys.
+Tests cover the main classifier behaviour, API contract, error cases, and frontend interactions.
 
 The frontend and backend are separated clearly, while the overall architecture stays simple enough for a small team to maintain.
+
+### Engineering quality
+
+The repository includes automated checks for both the frontend and backend so regressions are easier to catch and quality stays consistent.
+
+The frontend uses linting, formatting checks, TypeScript type checking, automated tests, accessibility checks, and a production build check.
+
+The backend uses Ruff for linting and formatting, pytest for automated tests, and Django's system checks.
+
+GitHub Actions runs the main frontend and backend quality checks on pushes and pull requests.
+
+The guidance-link check is kept as a separate manual workflow because it depends on an external website and shouldn't make normal CI unreliable.
 
 ### Current limitations
 
@@ -149,6 +161,8 @@ Guidance content is currently defined in code. That works for a small number of 
 The accessibility work covers the main journey, but a production service would need broader testing with real assistive technologies and users.
 
 The public API would also need stronger operational controls if traffic increased.
+
+The current automated tests cover the frontend and backend separately, but there isn't yet a browser-level end-to-end test that exercises the complete journey against the running API.
 
 ## Future improvements
 
@@ -169,27 +183,17 @@ These signals can help improve the service without storing raw enquiry text.
 
 The goal would be to improve based on real behaviour rather than guessing what users might need.
 
-### 2. Improve free-text classification
+### 2. Improve classification and clarification
 
-If real usage showed that the current phrase-based approach was too limited, I would evaluate a more capable classifier.
+I would first measure where the current deterministic classifier fails, using the journey signals above.
 
-A semantic classifier or a bounded LLM could help map different ways of describing the same issue into the existing controlled topics.
+If that showed the phrase list was too limited, I would consider a semantic classifier or a bounded LLM. It would only map an enquiry onto the existing controlled topics. It wouldn't generate legal advice.
 
-The important boundary would stay the same:
+The boundary would stay:
 
 `user enquiry → controlled topic → curated guidance`
 
-The model wouldn't generate legal advice.
-
-It would only help choose from a controlled set of topics.
-
-### 3. Add confidence and clarification
-
-The current classifier returns either a topic or `unknown`.
-
-A future version could also return a confidence level.
-
-For example:
+A later classifier could also return a confidence level:
 
 - high confidence → show the result
 - medium confidence → ask one short clarification question
@@ -199,47 +203,44 @@ A clarification could be something simple such as:
 
 > Is your question about a repair that hasn't been completed, or planned major works?
 
-This would improve the routing without pretending the system understands more than it does.
+That would improve routing without pretending the system understands more than it does.
 
-### 4. Move guidance content into a CMS
+### 3. Move guidance into a CMS and improve content governance
 
-The current guidance data is small enough to keep in code.
+The current guidance is small enough to keep in code.
 
-If the service needed more topics or regular content changes, I would move the curated guidance into a CMS such as Wagtail.
+If topics and content grew, Wagtail would be a sensible CMS. Content and legal teams could update titles, summaries, next steps, links, and related resources without a frontend deployment. The Django API response shape should stay the same, so the React app wouldn't need a large rewrite.
 
-That would allow content and legal teams to update:
+Content governance should cover broken-link checks, ownership, review dates, outdated guidance, and content that needs legal review. The existing manual guidance-link check can stay part of that process.
 
-- topic titles
-- summaries
-- next steps
-- guidance links
-- related content
+### 4. Add observability and reliability
 
-without needing a frontend code change.
-
-The Django API could keep the same response shape, so the React frontend wouldn't need a large architectural change.
-
-### 5. Add service observability
-
-For a public service, I would monitor both technical health and the quality of the user journey.
+I would monitor both technical health and the quality of the user journey.
 
 Useful signals could include:
 
 - API response times
-- failed API requests
+- failed requests
 - percentage of `unknown` results
 - topic distribution
 - frontend errors
 - broken guidance links
 - unusual traffic patterns
 
-For example, a sudden increase in `unknown` results could show that users are describing problems in ways the classifier doesn't understand.
+A sudden rise in `unknown` results could show that people are describing problems in ways the classifier doesn't understand. A rise in failed requests could point to an API or hosting problem.
 
-A rise in failed requests could point to an API or hosting problem.
+I wouldn't log raw enquiry text just for analytics.
 
-I would collect these signals without logging raw enquiry text.
+As usage grows, I would also set basic service expectations:
 
-### 6. Strengthen accessibility testing
+- expected response times
+- acceptable failure rates
+- availability targets
+- alerts when the service is unhealthy
+
+That would make reliability something the team can measure, rather than only reacting when someone reports a problem.
+
+### 5. Strengthen accessibility testing
 
 Accessibility testing should become part of the regular release process.
 
@@ -255,23 +256,23 @@ I would add structured testing with:
 
 For a public-facing service, I would also include usability testing with people who use assistive technologies.
 
-### 7. Improve content maintenance
+### 6. Add end-to-end testing
 
-The project already has a command and a manual GitHub Action for checking broken guidance links.
+The current tests already cover classifier behaviour, the API contract, frontend interactions, and accessibility behaviour. They don't yet verify the complete browser → frontend → API journey.
 
-As the amount of content grows, I would extend this into a regular content-maintenance process.
+A small E2E suite would be useful for a few critical journeys:
 
-That could include:
+- selecting a situation and seeing the expected guidance
+- submitting a free-text enquiry
+- receiving the safe `unknown` fallback
+- handling an API failure
+- changing answers or starting again
 
-- checking broken links
-- identifying outdated guidance
-- recording when content was last reviewed
-- assigning content ownership
-- highlighting content that needs legal review
+That suite should stay small and focused on those journeys, rather than repeating the unit and integration tests.
 
-This is especially important when the service depends on external guidance pages.
+Playwright would be a sensible option later. It isn't part of the project today. Those tests could also run in CI once a reliable test environment is available.
 
-### 8. Harden the public API as usage grows
+### 7. Harden the public API as usage grows
 
 The API is intentionally public because users don't need an account to use the triage service.
 
@@ -284,27 +285,10 @@ If traffic increased, I would add:
 
 These controls should protect the service without requiring the application to store the content of users' enquiries.
 
-### 9. Improve reliability as the service grows
+### 8. Add persistent infrastructure when the product needs it
 
-For a larger service, I would define basic service-level expectations for the API and user journey.
+The current triage feature doesn't persist enquiries, so PostgreSQL isn't needed today.
 
-For example:
+If later work needed persistent content, history or audit data, user preferences, or other operational data, PostgreSQL would be a suitable production database. Docker could then help developers run those supporting services in a reproducible local environment.
 
-- expected response times
-- acceptable API failure rates
-- availability targets
-- alerts when the service is unhealthy
-
-I would also monitor important dependencies, such as the availability of the guidance content the results link to.
-
-This would make reliability something the team can measure and improve, rather than only reacting when a user reports a problem.
-
-### 10. Add persistent storage only if the product needs it
-
-The current triage flow doesn't store enquiries, so a database isn't needed for the feature today.
-
-If the service later needed to store content, audit history, user preferences, or operational data, I would move to PostgreSQL.
-
-At that point, Docker could also be useful for giving developers a consistent local environment with the same supporting services.
-
-I wouldn't add either one before there is a real persistence or environment need.
+Neither should be added until the product has a real need.
