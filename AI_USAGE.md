@@ -1,17 +1,17 @@
 # AI usage
 
-AI-assisted tools were used while building this prototype. They were not used
-to generate legal guidance, and they are not part of the running app.
+AI-assisted tools were used while building this prototype.
 
-The tools were used mainly to:
+They were used mainly to:
 
-- validate technical decisions
+- draft and refine the implementation plan
+- look up current documentation and official sources
+- validate technical options and decisions
 - review edge cases
 - check accessibility and robustness concerns
-- compare approaches against current documentation
 
-Suggestions were reviewed before they were adopted. Behaviour was checked
-with automated tests and by using the form in the browser.
+Suggestions were reviewed before they were adopted.
 
-Classification is a small, deterministic phrase list on the server. It does
-not call an AI model at runtime.
+For example, GOV.UK Frontend was considered after using GOV.UK-style patterns in the early prototype. We decided not to add it because the flow only needed simple native controls, LEASE has its own visual identity, and using the full frontend package would have added styling and JavaScript that the prototype did not need. We still used the GOV.UK Design System documentation as a reference for accessible form, error and focus patterns.
+
+The final behaviour was verified with automated tests and manual browser checks.
